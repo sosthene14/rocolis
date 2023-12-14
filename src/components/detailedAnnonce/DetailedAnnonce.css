@@ -1,0 +1,57 @@
+.detailed-ads-text {
+    text-align: center;
+    color: #747474;
+    font-family: Raleway;
+    font-size: 36px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+}
+
+.detail-image-annonce {
+    width: 350px;
+    margin: auto;
+}
+
+.notification-toogle-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.notification-demarcheur {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    color: #747474;
+    font-size: 15px;
+    font-style: normal;
+    line-height: normal;
+}
+
+.travel-detail-2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    color: #747474;
+    font-family: Raleway;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+.contacter-vendeur{
+    color: #747474;
+    font-family: Raleway;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+  
+}
+.contact-img{
+    width: 80px;
+    cursor: pointer;
+}

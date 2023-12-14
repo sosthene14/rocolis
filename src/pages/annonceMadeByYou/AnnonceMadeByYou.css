@@ -1,0 +1,130 @@
+.detailed-ads-text {
+  text-align: center;
+  color: #747474;
+  font-family: Raleway;
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: normal;
+}
+
+.detail-image-annonce {
+  width: 350px;
+  margin: auto;
+}
+
+.notification-toogle-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notification-demarcheur {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  color: #747474;
+  font-size: 15px;
+  font-style: normal;
+  line-height: normal;
+}
+
+.contacter-vendeur {
+  color: #747474;
+  font-family: Raleway;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.contact-img {
+  width: 80px;
+  cursor: pointer;
+}
+
+.detailed-ads-you {
+  width: 400px;
+  margin: auto;
+  background-color: #e5e5e5;
+  padding: 30px;
+  border-radius: 17px;
+  margin-bottom: 40px;
+}
+.travel-detail {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  color: #747474;
+  font-family: Raleway;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  overflow: hidden;
+  height: 100px;
+  padding-top: 250px;
+}
+
+.travel-detail-true {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  color: #747474;
+  font-family: Raleway;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+.realy-delete {
+  position: absolute;
+  margin-top: -180px;
+  display: flex;
+  gap: 20px;
+  margin-left: 26px;
+  color: #747474;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  padding: 20px;
+  border-radius: 17px;
+  background-color: #d7d7d7;
+}
+.realy-delete-none {
+  display: none;
+}
+.detailed-ads-you span {
+  display: flex;
+  gap: 10px;
+}
+.input-modification:disabled {
+  background-color: #e5e5e5;
+  border: none;
+  outline: none;
+  color: #747474;
+  font-family: Raleway;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+}
+.input-modification {
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  color: #747474;
+  font-size: 14px;
+  margin-left: auto;
+  padding-left: 5px;
+  height: 30px;
+}
+.travel-detail span{
+  display: flex;
+  justify-content: space-between;
+}
+span{
+  font-size: 17px;
+}

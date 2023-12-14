@@ -1,0 +1,149 @@
+.search-form {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 150px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.label-search {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.destination-input {
+    border-radius: 5px;
+    background: #E5E5E5;
+    border: none;
+    padding-left: 15px;
+    font-size: 1em;
+    height: 40px;
+    outline: none;
+}
+.date-input{
+    border-radius: 5px;
+    background: #E5E5E5;
+    border: none;
+    font-size: 1.5em;
+    height: 40px;
+    outline: none;
+}
+.search-btn{
+    border-radius: 5px;
+    background: #6C63FF;
+    cursor: pointer;
+    border: none;
+    color: #FFF;
+    font-family: Raleway;
+    font-size: 15px;
+    width: 100px;
+    height: 40px;
+    margin: auto;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    transition: all .5s;
+}
+#destination-list{
+    position: absolute;
+    margin-top: 50px;
+    list-style: none;
+    text-decoration: none;
+    background-color: white;
+    color: #747474;
+    padding: 20px;
+    border-radius: 10px;
+  
+}
+#destination-list-none{
+    display: none;
+}
+
+.search-form {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 150px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.label-search {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.depart-input {
+    border-radius: 5px;
+    background: #E5E5E5;
+    border: none;
+    padding-left: 15px;
+    font-size: 1em;
+    height: 40px;
+    outline: none;
+}
+.depart-input-error {
+    border-radius: 5px;
+    background: #f17c7c;
+    border: none;
+    padding-left: 15px;
+    font-size: 1em;
+    height: 40px;
+    outline: none;
+}
+.depart-input-error::placeholder {
+   color: white;
+}
+
+.date-input {
+    border-radius: 5px;
+    background: #E5E5E5;
+    border: none;
+    font-size: 1.5em;
+    height: 40px;
+    outline: none;
+}
+.date-input-error {
+    border-radius: 5px;
+    background: #f17c7c;
+    border: none;
+    font-size: 1.5em;
+    height: 40px;
+    outline: none;
+    color: white;
+}
+
+.search-btn {
+    border-radius: 5px;
+    background: #6C63FF;
+    cursor: pointer;
+    border: none;
+    color: #FFF;
+    font-family: Raleway;
+    font-size: 15px;
+    width: 100px;
+    height: 40px;
+    margin: auto;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    transition: all .5s;
+}
+
+#depart-list {
+    position: absolute;
+    margin-top: 50px;
+    list-style: none;
+    text-decoration: none;
+    background-color: white;
+    color: #747474;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#depart-list-none {
+    display: none;
+}

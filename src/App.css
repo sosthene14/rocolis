@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&family=Raleway:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  font-family: 'Raleway', sans-serif;
+}
+*,
+*:before,
+*:after{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+#login_text{
+  font-size: 13px;
+}
+#verification-text{
+  cursor: pointer;
+}
+#error_password{
+  text-align: center;
+  color: red;
+  font-size: .8em;
+  display: block;
+}
+.loader-div {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+#error_password_invisible{
+  display: none;
+}

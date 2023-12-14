@@ -1,0 +1,16 @@
+.filter-div{
+    display: flex;
+    justify-content: center;
+    margin-top: 100px;
+}
+.filter-div select{
+    border: none;
+    padding: 20px;
+    font-size: 1.1em;
+    outline: none;
+}
+.filter-div select option{
+    border: none;
+    outline: none;
+    border-radius: 5px;
+}

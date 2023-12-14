@@ -1,0 +1,10 @@
+.text-data-mod {
+  color: #747474;
+  font-family: Raleway;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  cursor: pointer;
+  transition: all 0.7s;
+}

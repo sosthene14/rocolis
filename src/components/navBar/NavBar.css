@@ -1,0 +1,17 @@
+.div-nav {
+    background-color:  #262626;;
+    width: 100%;
+    height: 200px;
+    background-position: center center;
+    background-size: cover;
+    /* Use background-color instead of just lightgray */
+    color: white;
+    
+}
+.nav-ul-title{
+    display: flex;
+    justify-content: space-between;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-top: 70px;
+}

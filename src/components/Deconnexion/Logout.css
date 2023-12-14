@@ -1,0 +1,60 @@
+.container-logout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 49%;
+    left: 90%;
+    transform: translate(-50%, -50%);
+    transition: all 0.7s;
+    padding: 50px;
+    background-color: rgb(230, 230, 230);
+    border-radius: 10px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    margin: auto;
+    width: 300px;
+    text-align: center;
+  }
+  
+  .container-logout-invisible {
+    display: none;
+  }
+  .logout {
+    width: 20px;
+    cursor: pointer;
+    position: relative;
+    top: 25%;
+  }
+  .logout-2 {
+    width: 30px;
+    cursor: pointer;
+    position: relative;
+    top: 25%;
+  }
+  .submit-in_btn{
+    border-radius: 10px;
+    background: #6C63FF;
+    cursor: pointer;
+    border: none;
+    color: #FFF;
+    font-family: Raleway;
+    font-size: 15px;
+    width: 100px;
+    height: 30px;
+    margin: auto;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    transition: all .5s;
+    margin-top: 20px;
+  }
+  .text-logout {
+    color: #747474;
+    font-family: Raleway;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    cursor: pointer;
+    transition: all 0.7s;
+  }

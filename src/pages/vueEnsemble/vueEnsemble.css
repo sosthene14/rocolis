@@ -1,0 +1,66 @@
+.vue-ensemble input {
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  color: #747474;
+  font-size: 14px;
+  margin-left: auto;
+  padding-left: 5px;
+  height: 30px;
+}
+.input-error {
+  border-radius: 5px;
+  background: #f17c7c;
+  border: none;
+  font-size: 14px;
+  outline: none;
+  color: white;
+}
+.vue-ensemble-div-input {
+  display: flex;
+  align-items: center;
+  margin-left: 50px;
+  gap: 50px;
+  font-size: 1.4em;
+  justify-content: center;
+}
+.vue-ensemble-div-input img {
+  width: 50px;
+}
+.vue-ensemble {
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  width: 400px;
+  margin: auto;
+  border-radius: 17px;
+  padding-right: 40px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.vue-ensemble-p {
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  color: #747474;
+  font-size: 14px;
+  font-weight: 600;
+  margin-left: auto;
+  padding-left: 5px;
+}
+.vue-ensemble-btn {
+  border-radius: 10px;
+  background: #6c63ff;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  font-family: Raleway;
+  font-size: 15px;
+  width: 100px;
+  height: 30px;
+  margin: auto;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  transition: all 0.5s;
+  margin-top: 20px;
+}

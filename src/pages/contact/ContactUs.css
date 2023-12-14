@@ -1,0 +1,28 @@
+/* ContactUs.css */
+.contact-us-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-top: 30px;
+}
+
+.contact-us-container h2 {
+  color: #333;
+}
+.contact-img {
+  width: 40px;
+}
+.p {
+  color: #747474;
+  font-family: Raleway;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  cursor: pointer;
+  transition: all 0.7s;
+}
+/* Ajoutez d'autres styles CSS selon vos besoins */

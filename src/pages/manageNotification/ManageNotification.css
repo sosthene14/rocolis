@@ -1,0 +1,41 @@
+.p-notifications{
+    color: #969696;
+    font-family: Raleway;
+    font-size: 1.2em;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 30px;
+    margin-top: 60px;
+    margin-left: 125px;
+    margin-right: 125px;
+    text-align: var(--align-text-center);
+}
+.btn-add-notification{
+    border-radius: 7px;
+    background: #6C63FF;
+    cursor: pointer;
+    border: none;
+    color: #FFF;
+    font-family: Raleway;
+    font-size: 15px;
+    width: 100px;
+    height: 30px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    transition: all .5s;
+    margin-top: 80px;
+    margin-left: 5px;
+}
+.date-input_{
+    border-radius: 5px;
+    background: #E5E5E5;
+    border: none;
+    font-size: 1.5em;
+    height: 30px;
+    outline: none;
+}
+.label-search{
+    display: flex;
+    flex-direction: column;
+}
