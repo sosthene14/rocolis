@@ -20,7 +20,7 @@ function PublishAdd({ datas }) {
   const hanldeDatas = (name, e) => {
     setData({
       ...data,
-      [name]: removeAccents(e.target.value),
+      [name]: e.target.value,
       view: 0,
       discutable: discutable.current.value ? discutable.current.value : false,
     });

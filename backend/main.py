@@ -10,7 +10,8 @@ import jwt_
 app = Flask(__name__)
 CORS(app)
 
-client = MongoClient('')
+client = MongoClient('mongodb+srv://rostelhightech:R0st3lDataS0s23@rosteldata.s5qekra.mongodb.net/rostelhightech'
+                     '?retryWrites=true&w=majority')
 db = client['users']
 collection = db['identity']
 
@@ -105,8 +106,8 @@ def confirmationCode(email_to_send=None):
     validation_code = generate_validation_code()
     code_liste.append(validation_code)
     email_sender = EmailSender(
-        email_from="",
-        sender_password="",
+        email_from="mounsambotesosthene1@gmail.com",
+        sender_password="fced ayiz tvkf yxmz",
         email_to=[data],
         email_subject="Code de validation",
         email_message=f"""
@@ -153,8 +154,8 @@ def confirmationCodeChanging(email_to_send=None):
     validation_code = generate_validation_code()
     code_liste.append(validation_code)
     email_sender = EmailSender(
-        email_from="",
-        sender_password="",
+        email_from="mounsambotesosthene1@gmail.com",
+        sender_password="fced ayiz tvkf yxmz",
         email_to=[data],
         email_subject="Code de validation",
         email_message=f"""

@@ -5,7 +5,8 @@ import bcrypt
 from bson import ObjectId
 from pymongo import MongoClient
 
-client = MongoClient()
+client = MongoClient('mongodb+srv://rostelhightech:R0st3lDataS0s23@rosteldata.s5qekra.mongodb.net/rostelhightech'
+                     '?retryWrites=true&w=majority')
 db = client['users']
 collection = db['identity']
 collection2 = db['ads']

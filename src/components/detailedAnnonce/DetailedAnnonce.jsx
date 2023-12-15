@@ -53,7 +53,6 @@ const DetailedAnnonce = ({ datas }) => {
     }).then((response) => {
       if (response.ok) {
         response.json().then((data) => {
-          console.log(data);
           setUserId(data._id);
         });
       }
@@ -84,7 +83,6 @@ const DetailedAnnonce = ({ datas }) => {
     } else {
       setDocumentId(results[0]["_id"]);
       setResult(results);
-      console.log(results);
     }
     setSeeSpiner(false);
   }
@@ -179,7 +177,7 @@ const DetailedAnnonce = ({ datas }) => {
                   Nom du Voyageur : <span>{voyageur.nom}</span>
                 </span>
                 <span>
-                  Ville de départ : <span>{voyageur.depart} </span>
+                  Ville de départ : <span>{voyageur.depart.toLocaleLowerCase()} </span>
                 </span>
                 <span>
                   Date de départ : <span>{formatDate(voyageur.dateVoyage)} </span>
@@ -188,7 +186,7 @@ const DetailedAnnonce = ({ datas }) => {
                   Date d'arrivée : <span>{formatDate(voyageur.dateArrive)}</span>
                 </span>
                 <span>
-                  Ville d'arrivée : <span> {voyageur.destination}</span>
+                  Ville d'arrivée : <span> {voyageur.destination.toLocaleLowerCase()}</span>
                 </span>
                 <span>
                   Kilos dispo : <span> {voyageur.kilosDispo}</span>

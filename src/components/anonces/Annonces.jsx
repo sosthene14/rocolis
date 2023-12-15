@@ -35,9 +35,9 @@ const Annonces = ({ data }) => {
                         </div>
                         <div className='traveling-information'>
                             <span>Salut c'est : <strong>{voyageur.nom}</strong> </span>
-                            <span>Je suis à : <strong>{voyageur.depart}</strong> actuellement</span>
+                            <span>Je suis à : <strong>{voyageur.depart.toLocaleLowerCase()}</strong> actuellement</span>
                             <span>Je voyage le : <strong>{formatDate(voyageur.dateVoyage)}</strong></span>
-                            <span>Je vais à : <strong>{voyageur.destination}</strong></span>
+                            <span>Je vais à : <strong>{voyageur.destination.toLocaleLowerCase()}</strong></span>
                             <span>kilo dispo : <strong>{voyageur.kilosDispo}</strong></span>
                             <span>prix kilo : <strong>{voyageur.prixKilo}</strong> FCFA/{voyageur.discutable ? "non discutable" : "discutable"}</span>
                         </div>

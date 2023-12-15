@@ -30,9 +30,6 @@ const SearchForm = ({datas}) => {
         if (inputDestination.trim() === "") {
             setOnErrorFieldDest(true)
         }
-        if (date_depart.current.value === "") {
-            setOnErrorFieldDateDprt(true)
-        }
         showResult(inputDestination,inputDepart,dateDepart)
     }
 
@@ -42,7 +39,7 @@ const SearchForm = ({datas}) => {
         }
         else{
             if (inputDepart.trim() !== "" && inputDestination.trim() !== "" && dateDepart.trim() !== ""){
-                window.location.pathname = `/searched/${inputDepart}/${inputDestination}/${date_depart.current.value}`;            }
+                window.location.pathname = `/searched/${inputDepart.toLocaleLowerCase()}/${inputDestination.toLocaleLowerCase()}/${date_depart.current.value}`;            }
             else{
             }
         }

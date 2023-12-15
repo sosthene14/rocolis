@@ -27,7 +27,7 @@ const AnnonceSearched = ({ datas }) => {
   useEffect(() => {
     setSeeSpiner(true);
     if (datas.length === 0) {
-        setSeeSpiner(true);
+      setSeeSpiner(true);
     } else {
       setSeeSpiner(false);
     }
@@ -35,16 +35,18 @@ const AnnonceSearched = ({ datas }) => {
     setData(datas);
   }, [datas]);
 
-
   useEffect(() => {
     go();
   }, [destination, data]);
 
   function go() {
-    let results = _.filter(data, {
-      destination: destination,
-      dateVoyage: departureDate,
-      depart: depart,
+    let results = _.filter(data, (voyage) => {
+      return (
+        voyage.destination.toLocaleLowerCase() ===
+          destination.toLocaleLowerCase() &&
+        voyage.dateVoyage === departureDate &&
+        voyage.depart.toLocaleLowerCase() === depart.toLocaleLowerCase()
+      );
     });
     setSeeSpiner(true);
     if (results.length === 0) {
@@ -56,14 +58,15 @@ const AnnonceSearched = ({ datas }) => {
       setBestresultsData(results);
     }
 
-    // Filtrer les résultats avec la même destination mais une date différente
     let low_results = _.filter(data, (voyage) => {
       return (
-        voyage.destination.toLowerCase() === destination.toLowerCase() &&
-        voyage.dateVoyage !== departureDate &&
-        voyage.depart.toLowerCase() === depart.toLocaleLowerCase()
+        voyage.destination.toLocaleLowerCase() ===
+          destination.toLocaleLowerCase() &&
+        (departureDate === undefined || voyage.dateVoyage !== departureDate) &&
+        voyage.depart.toLocaleLowerCase() === depart.toLocaleLowerCase()
       );
     });
+
     if (low_results.length > 0) {
       setAvaibleSimilarDatas(true);
       setSeeSpiner(false);
@@ -75,38 +78,61 @@ const AnnonceSearched = ({ datas }) => {
   }
   return (
     <div>
-        
       <div style={{}}>
         <NavBar />
         <div>
-             <SearchForm datas={datas} /> 
+          <SearchForm datas={datas} />
         </div>
-      
       </div>
-      
-      <h1
-        style={{ textAlign: "center", marginBottom: "50px", marginTop: "50px" }}
-      >
-        Meilleurs résultas
-      </h1>
+
       {bestResultsDatas.length > 0 ? (
         <div>
-          <FilterDropdown data={bestResultsDatas} />
+          <h1
+            style={{
+              textAlign: "center",
+              marginBottom: "50px",
+              marginTop: "50px",
+            }}
+          >
+            Meilleurs résultas
+          </h1>
+          <div>
+            <FilterDropdown data={bestResultsDatas} />
+          </div>
         </div>
       ) : (
-        <div
-          style={{
-            display: "flex",
-            gap: "80px",
-            justifyContent: "center",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <h3>
-            Aucune donnée n'a pu être trouvé pour les résultats identiques
-          </h3>
-          <img src={images.noData} style={{ width: "220px" }} />
+        <div>
+          {similarResultsDatas.length > 0 ? (
+            <div>
+              <h1
+                style={{
+                  textAlign: "center",
+                  marginBottom: "50px",
+                  marginTop: "50px",
+                }}
+              >
+                Résultats similaires
+              </h1>
+              <div>
+                <FilterDropdown data={similarResultsDatas} />
+              </div>
+            </div>
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                gap: "80px",
+                justifyContent: "center",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <h3>
+                Aucune donnée n'a pu être trouvé
+              </h3>
+              <img src={images.noData} style={{ width: "220px" }} />
+            </div>
+          )}
         </div>
       )}
 
@@ -131,31 +157,7 @@ const AnnonceSearched = ({ datas }) => {
           Une erreur est survenue. Veuillez recharger la page.
         </p>
       )}
-      <h1
-        style={{ textAlign: "center", marginBottom: "50px", marginTop: "50px" }}
-      >
-        Résultats similaires
-      </h1>
-      {similarResultsDatas.length > 0 ? (
-        <div>
-          <FilterDropdown data={similarResultsDatas} />
-        </div>
-      ) : (
-        <div
-          style={{
-            display: "flex",
-            gap: "80px",
-            justifyContent: "center",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <h3>
-            Aucune donnée n'a pu être trouvé pour les résultats simmilaires
-          </h3>
-          <img src={images.noData} style={{ width: "220px" }} />
-        </div>
-      )}
+
       <FakeFooter />
     </div>
   );

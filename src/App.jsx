@@ -81,6 +81,10 @@ function App() {
           path="/searched/:depart/:destination/:departureDate"
           element={seeRoute == true ? <AnnonceSearched datas={data} /> : <Signin />}
         />
+         <Route
+          path="/searched/:depart/:destination"
+          element={seeRoute == true ? <AnnonceSearched datas={data} /> : <Signin />}
+        />
         <Route
           path="/detailed-ads/:_id"
           element={seeRoute == true ? <DetailedAnnonce datas={data} /> : <DetailedAnnonce datas={data} />}

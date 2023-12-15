@@ -11,10 +11,10 @@ function ManageNotification() {
   const [data, setData] = useState([]);
   const depart = useRef();
   const dest = useRef();
-  
+   const dataArray = [];
 
   const handleAddInput = () => {
-    const dataArray = [];
+   
     const newInput = { depart: depart.current.value, destination: dest.current.value };
     dataArray.push(newInput);
     console.log(dataArray);
