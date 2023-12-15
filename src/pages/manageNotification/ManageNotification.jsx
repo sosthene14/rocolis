@@ -11,24 +11,26 @@ function ManageNotification() {
   const [data, setData] = useState([]);
   const depart = useRef();
   const dest = useRef();
-   const dataArray = [];
-
+  const [dataArray, setDataArray] = useState([]);
   const handleAddInput = () => {
-   
-    const newInput = { depart: depart.current.value, destination: dest.current.value };
-    dataArray.push(newInput);
+    const newInput = {
+      depart: depart.current.value,
+      destination: dest.current.value,
+    };
+    setDataArray((prevDataArray) => [...prevDataArray, newInput]);
+    setInputValues([...inputValues, { depart: "", destination: "" }]);
+  };
+  useEffect(() => {
     console.log(dataArray);
     setData(dataArray[0]);
-    setInputValues([...inputValues, { depart: "", destination: "" }]);
     
-  };
-
+  }, [dataArray]);
+  
   const updateInputValue = (index, field, value) => {
     const newValues = [...inputValues];
     newValues[index][field] = value;
     setInputValues(newValues);
   };
-
 
   return (
     <div>
