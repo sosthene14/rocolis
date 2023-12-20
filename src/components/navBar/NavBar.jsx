@@ -12,8 +12,9 @@ const NavBar = () => {
       </div>
       <div className='nav-ul-title'>
         <div>
-          <h1 style={{ color: "white",cursor:"pointer" }} onClick={()=>{
+          <h1 className='text-4xl font-medium' style={{ color: "white",cursor:"pointer" }} onClick={()=>{
             window.location.pathname = "/"
+            
           }}>ROCOLIS</h1>
         </div>
         <div>

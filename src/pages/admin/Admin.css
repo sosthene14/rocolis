@@ -1,0 +1,20 @@
+.admin-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .admin-form {
+    text-align: center;
+  }
+  
+  .admin-form input {
+    padding: 8px;
+    margin: 8px;
+  }
+  
+  .error-message {
+    color: red;
+    margin-top: 8px;
+  }
+  

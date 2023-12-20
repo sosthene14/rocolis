@@ -12,9 +12,19 @@
   "dependencies": {
     "@coreui/react": "^4.11.0",
     "@davzon/react-country-state-city": "^1.0.10",
+    "@headlessui/react": "^1.7.17",
+    "@heroicons/react": "^2.0.18",
     "@supabase/supabase-js": "^2.38.4",
     "antd": "^5.11.5",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
+    "bson": "^6.2.0",
+    "country-state-city": "^3.2.1",
+    "crypto-js": "^4.2.0",
+    "currency-symbol": "^1.0.6",
+    "dotenv": "^16.3.1",
     "iso-country-currency": "^0.7.2",
+    "js-sha256": "^0.10.1",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-country-state-city": "^1.1.0",
@@ -23,16 +33,26 @@
     "react-jwt": "^1.2.0",
     "react-phone-input-2": "^2.15.1",
     "react-phone-number-input": "^3.3.7",
-    "universal-cookie": "^6.1.1"
+    "react-select": "^5.8.0",
+    "react-widgets": "^5.8.4",
+    "universal-cookie": "^6.1.1",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "@vitejs/plugin-react": "^4.2.0",
+    "autoprefixer": "^10.4.16",
     "eslint": "^8.53.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",
+    "postcss": "^8.4.32",
+    "react-error-overlay": "^6.0.9",
+    "tailwindcss": "^3.3.6",
     "vite": "^5.0.0"
+  },
+  "overrides": {
+    "react-error-overlay": "$react-error-overlay"
   }
 }

@@ -2,25 +2,42 @@ import React, { useState, useEffect, useRef } from "react";
 import "./searchForm.css";
 import useGeoLocation from "react-ipgeolocation";
 import "./searchForm.css";
+import Cookies from "universal-cookie";
+import { useJwt, decodeToken, isExpired } from "react-jwt";
 
 const TravelerSearchFormDepart = ({
   input_depart,
   onErrorFieldDepartDest,
   removeError,
   datas,
+  notificationData,
 }) => {
-  const [depart, setDepart] = useState("");
-  const [departureDate, setDepartureDate] = useState("");
+  const [villeDepart, setDepart] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [canViewSuggestion, setCanViewSuggestion] = useState(false);
   const [departNotAvailable, setDepartNotAvailable] = useState(false);
   const [data, setData] = useState([]);
   const depart_suggestion = useRef(null);
+  const cookies = new Cookies(null, { path: "/" });
+  const [email, setEmail] = useState("");
+  const [otherSuggestion, setOtherSuggestion] = useState([]);
 
   useEffect(() => {
     setData(datas);
   }, [datas]);
+
+  useEffect(() => {
+    if (cookies.get("jwt") != undefined) {
+      const decodedToken = decodeToken(cookies.get("jwt"));
+      setEmail(decodedToken.email);
+    }
+  }, []);
+  useEffect(() => {
+    if (notificationData?.length > 0) {
+      setOtherSuggestion(notificationData);
+    }
+  }, [email, notificationData]);
 
   const handleSearchs = (e) => {
     const term = e.target.value;
@@ -32,16 +49,29 @@ const TravelerSearchFormDepart = ({
       setSearchResults([]);
     } else {
       const filteredResults = data.filter((element) =>
-        element.depart.toLowerCase().includes(term.toLowerCase())
+        element.villeDepart.toLowerCase().includes(term.toLowerCase())
+      );
+console.log(otherSuggestion)
+      const filteredResults2 = otherSuggestion.filter((element) =>
+        element.villeDepart.toLowerCase().includes(term.toLowerCase())
       );
 
       filteredResults.forEach((element) => {
-        uniqueDeparts.add(element.depart.toLowerCase());
+        uniqueDeparts.add(element.villeDepart.toLowerCase());
       });
-      setSearchResults(uniqueDeparts);
-      setCanViewSuggestion(true);
+      filteredResults2.forEach((element) => {
+        uniqueDeparts.add(element.villeDepart.toLowerCase());
+      });
+      if (data.length > 0) {
+        setSearchResults(uniqueDeparts);
+        setCanViewSuggestion(true);
+      }
 
-      if (term.trim() !== "" && filteredResults.length === 0) {
+      if (
+        term.trim() !== "" &&
+        filteredResults.length === 0 &&
+        filteredResults2.length === 0
+      ) {
         setDepartNotAvailable(true);
       } else {
         setDepartNotAvailable(false);
@@ -82,14 +112,14 @@ const TravelerSearchFormDepart = ({
           <label className="label-search">
             <div style={{ display: "flex", flexDirection: "column" }}>
               <input
-                id="input-depart"
+                id="input-villeDepart"
                 placeholder="Ville de départ"
                 ref={input_depart}
                 className={
-                  onErrorFieldDepartDest ? "depart-input-error" : "depart-input"
+                  onErrorFieldDepartDest ? "villeDepart-input-error" : "villeDepart-input"
                 }
                 type="text"
-                value={depart}
+                value={villeDepart}
                 onChange={(e) => {
                   setDepart(e.target.value);
                   handleSearchs(e);
@@ -99,7 +129,7 @@ const TravelerSearchFormDepart = ({
               />
               <div
                 ref={depart_suggestion}
-                id={canViewSuggestion ? "depart-list" : "depart-list-none"}
+                id={canViewSuggestion ? "villeDepart-list" : "villeDepart-list-none"}
               >
                 {searchResults.size > 0 && searchTerm.trim() !== "" && (
                   <ul>

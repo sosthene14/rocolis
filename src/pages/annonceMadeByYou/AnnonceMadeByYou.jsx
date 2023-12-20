@@ -5,9 +5,13 @@ import _, { set } from "lodash";
 
 import "./AnnonceMadeByYou.css";
 import { FakeFooter } from "../../components/fakeFooter/FakeFooter";
+import Succes from "../../components/succes/succes";
+import Error from "../../components/error/Error";
+import Select from "react-select";
 
 const AnnonceMadeByYou = ({ data }) => {
   const [datas, setData] = useState([]);
+  const [selectedOption, setSelectedOption] = useState(null);
 
   const [isOpenArray, setIsOpenArray] = useState(
     new Array(datas.length).fill(false)
@@ -18,6 +22,10 @@ const AnnonceMadeByYou = ({ data }) => {
   const [disabledModification, setDisabledModification] = useState(
     new Array(datas.length).fill(false)
   );
+  const [isSuccess, setIsSuccess] = useState(
+    new Array(datas.length).fill(false)
+  );
+  const [isError, setIsError] = useState(new Array(datas.length).fill(false));
   useEffect(() => {
     setData(data);
   }, [data]);
@@ -27,6 +35,16 @@ const AnnonceMadeByYou = ({ data }) => {
     const newArray = [...isOpenArray];
     newArray[index] = !newArray[index];
     setIsOpenArray(newArray);
+  }
+  function handleSuccess(index) {
+    const newArray = [...isSuccess];
+    newArray[index] = !newArray[index];
+    setIsSuccess(newArray);
+  }
+  function handleError(index) {
+    const newArray = [...isError];
+    newArray[index] = !newArray[index];
+    setIsError(newArray);
   }
 
   function handleSeeAllDetails(index) {
@@ -101,7 +119,23 @@ const AnnonceMadeByYou = ({ data }) => {
       body: JSON.stringify(datas[index]),
     }).then((response) => {
       if (response.ok) {
+        handleSuccess(index);
+        setTimeout(() => {
+          setIsSuccess((prevIsSuccess) => {
+            const newArray = [...prevIsSuccess];
+            newArray[index] = false;
+            return newArray;
+          });
+        }, 1000);
       } else {
+        handleError(index);
+        setTimeout(() => {
+          setIsError((prevIsError) => {
+            const newArray = [...prevIsError];
+            newArray[index] = false;
+            return newArray;
+          });
+        }, 1000);
       }
     });
   };
@@ -126,7 +160,19 @@ const AnnonceMadeByYou = ({ data }) => {
     removeAds(index);
     go(id, index);
   };
-
+  const currencyOptions = [
+    { value: "XAF", label: "XAF (CFA)" },
+    { value: "XOF", label: "XOF (CFA)" },
+    { value: "USD", label: "USD ($)" },
+    { value: "EUR", label: "EUR (€)" },
+    { value: "GBP", label: "GBP (£)" },
+    { value: "JPY", label: "JPY (¥)" },
+  ];
+  useEffect(() => {
+    if (selectedOption !== null) {
+      localStorage.setItem("selectedOption", JSON.stringify(selectedOption));
+    }
+  }, [selectedOption]);
   return (
     <div>
       <div>
@@ -160,14 +206,23 @@ const AnnonceMadeByYou = ({ data }) => {
                         onChange={(e) => handleInputChange(e, "nom", index)}
                       />
                     </span>
+
+                    {isSuccess[index] ? <Succes /> : null}
+
+                    {isError[index] ? (
+                      <div>
+                        <Error />
+                      </div>
+                    ) : null}
+
                     <span>
                       Ville de départ:{" "}
                       <input
                         className="input-modification"
                         disabled={!disabledModification[index]}
                         type="text"
-                        value={voyageur.depart}
-                        onChange={(e) => handleInputChange(e, "depart", index)}
+                        value={voyageur.villeDepart}
+                        onChange={(e) => handleInputChange(e, "villeDepart", index)}
                       />
                     </span>
                     <span>
@@ -176,9 +231,9 @@ const AnnonceMadeByYou = ({ data }) => {
                         className="input-modification"
                         disabled={!disabledModification[index]}
                         type="date"
-                        value={convertDate(voyageur.dateVoyage)}
+                        value={convertDate(voyageur.dateDepart)}
                         onChange={(e) =>
-                          handleInputChange(e, "dateVoyage", index)
+                          handleInputChange(e, "dateDepart", index)
                         }
                       />
                     </span>
@@ -188,9 +243,9 @@ const AnnonceMadeByYou = ({ data }) => {
                         className="input-modification"
                         disabled={!disabledModification[index]}
                         type="text"
-                        value={voyageur.destination}
+                        value={voyageur.villeArrive}
                         onChange={(e) =>
-                          handleInputChange(e, "destination", index)
+                          handleInputChange(e, "villeArrive", index)
                         }
                       />
                     </span>
@@ -226,10 +281,20 @@ const AnnonceMadeByYou = ({ data }) => {
                         className="input-modification"
                         disabled={!disabledModification[index]}
                         type="number"
+                        style={{ width: "100px" }}
                         value={voyageur.prixKilo}
                         onChange={(e) =>
                           handleInputChange(e, "prixKilo", index)
                         }
+                      />
+                      <Select
+                        required
+                        className="input-modification--"
+                        defaultValue={JSON.parse(
+                          localStorage.getItem("selectedOption")
+                        )}
+                        onChange={setSelectedOption}
+                        options={currencyOptions}
                       />
                     </span>
 
@@ -321,7 +386,11 @@ const AnnonceMadeByYou = ({ data }) => {
                       <button
                         className="pagination-btn"
                         onClick={(e) => {
-                          go(voyageur._id, e);
+                          setIsOpenArray((prev) => {
+                            const newIsOpenArray = [...prev];
+                            newIsOpenArray[index] = false;
+                            return newIsOpenArray;
+                          });
                         }}
                       >
                         Non
@@ -331,6 +400,14 @@ const AnnonceMadeByYou = ({ data }) => {
                 </div>
               );
             })}
+          </div>
+          <div>
+            {datas.length === 0 ? (
+              <p style={{ textAlign: "center", color: "red" }}>
+                {" "}
+                Il n'y a pas encore d'annonces disponibles
+              </p>
+            ) : null}
           </div>
         </div>
       </div>

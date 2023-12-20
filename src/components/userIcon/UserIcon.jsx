@@ -33,9 +33,9 @@ const UserIcon = () => {
   }
   const handleLogout = () => {
     cookies.remove("jwt");
-    setTimeout(() => {
+    if (!cookies.get("jwt")) {
       window.location.href = "/signin";
-    }, 1000);
+    }
   };
   useOutsideAlerter(notificatiion_container, icon);
   return (

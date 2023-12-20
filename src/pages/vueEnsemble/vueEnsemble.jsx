@@ -2,8 +2,6 @@ import React from "react";
 import NavBar from "../../components/navBar/NavBar";
 import images from "../../assets/images/images";
 import "./vueEnsemble.css";
-import Cookies from "universal-cookie";
-import { decodeToken } from "react-jwt";
 import { useState, useEffect, useRef } from "react";
 import { FakeFooter } from "../../components/fakeFooter/FakeFooter";
 import _ from "lodash";
@@ -11,50 +9,57 @@ import { ThreeCircles } from "react-loader-spinner";
 import CodeVerificationMessage from "../../components/simpleCodeVerification/SimpleCode";
 import { isValidPhoneNumber } from "react-phone-number-input";
 
-const VueEnsemble = ({datas}) => {
-  const cookies = new Cookies(null, { path: "/" });
+const VueEnsemble = ({ datas, email }) => {
   const [error, setError] = useState(false);
   const [data, setData] = useState([]);
   const [data2, setData2] = useState([]);
   const [viewNumber, setViewNumber] = useState(0);
-  const [email, setEmail] = useState("");
   const [canModify, setCanModify] = useState(false);
   const [seeModifyOption, setSeeModifyOption] = useState(false);
   const modify = useRef();
   const [validePhoneNumber, setValidePhoneNumber] = useState(true);
   const [seeSpiner, setSeeSpiner] = useState(false);
+  let sum = 0;
 
   useEffect(() => {
-    if (cookies.get("jwt")) {
-      const getCockie = cookies.get("jwt");
-      const decodedToken = decodeToken(getCockie);
-      if (decodedToken.email) {
-        setError(false);
-        
-        setEmail(decodedToken.email);
-        
-        if (data2.length > 0 && email != ""){
-          go(decodedToken.email);
-        getPersonnalData(decodedToken.email);
-        }
-      } else {
-        setError(true);
+    if (email !== "") {
+      setError(false);
+      if (email != "") {
+        go(email);
+        getPersonnalData(email);
       }
+    } else {
+      setError(true);
     }
-  }, [data2, email]);
+  }, [email, data2]);
 
   useEffect(() => {
     setData2(datas);
   }, [datas]);
+
+  useEffect(() => {
+    setSeeModifyOption(false);
+  }, [canModify]);
+
+  useEffect(() => {
+    if (data["telephone"]) {
+      if (isValidPhoneNumber("+" + data["telephone"])) {
+        setValidePhoneNumber(true);
+      } else {
+        setValidePhoneNumber(false);
+      }
+    }
+  }, [data["telephone"]]);
   function go(email) {
     let results = _.filter(data2, { publishedBy: email });
     if (results.length === 0) {
+      localStorage.setItem("total", 0);
     } else {
       calculateSum(results);
       localStorage.setItem("total", results.length);
     }
   }
-  let sum = 0;
+
   function calculateSum(data) {
     data.map((item) => {
       sum = sum + item.view;
@@ -68,9 +73,6 @@ const VueEnsemble = ({datas}) => {
       setSeeModifyOption(false);
     }
   };
-  useEffect(() => {
-    setSeeModifyOption(false);
-  }, [canModify]);
 
   const getPersonnalData = async (email) => {
     try {
@@ -106,16 +108,6 @@ const VueEnsemble = ({datas}) => {
   const handleChange = (e, element) => {
     setData({ ...data, [element]: e.target.value });
   };
-
-  useEffect(() => {
-    if (data["telephone"]) {
-      if (isValidPhoneNumber("+" + data["telephone"])) {
-        setValidePhoneNumber(true);
-      } else {
-        setValidePhoneNumber(false);
-      }
-    }
-  }, [data["telephone"]]);
 
   const updatePersonnalData = async () => {
     setSeeSpiner(true);
@@ -175,12 +167,12 @@ const VueEnsemble = ({datas}) => {
             style={{ width: "550px", marginBottom: "80px" }}
           />
         </div>
-        <div className="vue-ensemble">
+        <div className=" shadow-xl mx-auto rounded-xl w-96">
           <div className="vue-ensemble-div-input">
             <div>
-              <img src={images.nom} />
+              <img src={images.nom} className="w-10" />
             </div>
-            <div>
+            <div className="ml-5">
               <label className="vue-ensemble-p">Nom</label>
               <input
                 type="text"
@@ -192,14 +184,15 @@ const VueEnsemble = ({datas}) => {
                 }}
                 disabled={canModify ? false : true}
                 required
+                className="w-60 sm:w-72 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
               />
             </div>
           </div>
           <div className="vue-ensemble-div-input">
             <div>
-              <img src={images.nom} />
+              <img src={images.nom} className="w-10" />
             </div>
-            <div>
+            <div className="ml-5">
               <label className="vue-ensemble-p">Prenom</label>
               <input
                 type="text"
@@ -211,28 +204,30 @@ const VueEnsemble = ({datas}) => {
                 }}
                 disabled={canModify ? false : true}
                 required
+                className="w-60 sm:w-72 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
               />
             </div>
           </div>
           <div className="vue-ensemble-div-input">
             <div>
-              <img src={images.Email} />
+              <img src={images.Email} className="w-10" />
             </div>
-            <div>
+            <div className="ml-5">
               <label className="vue-ensemble-p">Email</label>
               <input
                 type="text"
                 value={data.email || ""}
                 disabled
                 onChange={(e) => {}}
+                className="w-60 sm:w-72 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
               />
             </div>
           </div>
           <div className="vue-ensemble-div-input">
             <div>
-              <img src={images.Password} />
+              <img src={images.Password} className="w-10" />
             </div>
-            <div>
+            <div className="ml-5">
               <label className="vue-ensemble-p">Password</label>
               <input
                 type="text"
@@ -244,14 +239,15 @@ const VueEnsemble = ({datas}) => {
                   handleChange(e, "mot_de_passe");
                 }}
                 disabled={canModify ? false : true}
+                className="w-60 sm:w-72 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
               />
             </div>
           </div>
           <div className="vue-ensemble-div-input">
             <div>
-              <img src={images.OrderCompleted} />
+              <img src={images.OrderCompleted} className="w-10" />
             </div>
-            <div>
+            <div className="ml-5">
               <label className="vue-ensemble-p">Nombre de publication</label>
 
               <input
@@ -259,18 +255,23 @@ const VueEnsemble = ({datas}) => {
                 value={localStorage.getItem("total") || 0}
                 disabled
                 onChange={(e) => {}}
+                className="w-60 sm:w-72 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
               />
             </div>
           </div>
           <div className="vue-ensemble-div-input">
             <div>
-              <img src={images.Phone} />
+              <img src={images.Phone} className="w-10" />
             </div>
-            <div>
+            <div className="ml-5">
               <label className="vue-ensemble-p">Téléphone</label>
 
               <input
-                className={validePhoneNumber ? "" : "input-error"}
+                className={
+                  validePhoneNumber
+                    ? "w-60 sm:w-72 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
+                    : "shadow-md w-60 sm:w-72 text-sm rounded-lg bg-rose-100 text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
+                }
                 type="number"
                 value={data.telephone || ""}
                 required
@@ -283,9 +284,9 @@ const VueEnsemble = ({datas}) => {
           </div>
           <div className="vue-ensemble-div-input">
             <div>
-              <img src={images.Eye} />
+              <img src={images.Eye} className="w-10" />
             </div>
-            <div>
+            <div className="ml-5">
               <label className="vue-ensemble-p">Nombre total de vues</label>
 
               <input
@@ -293,6 +294,7 @@ const VueEnsemble = ({datas}) => {
                 disabled
                 value={viewNumber}
                 onChange={(e) => {}}
+                className="w-60 sm:w-72 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
               />
             </div>
           </div>

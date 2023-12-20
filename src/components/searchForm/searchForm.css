@@ -13,7 +13,7 @@
     align-items: center;
 }
 
-.destination-input {
+.villeArrive-input {
     border-radius: 5px;
     background: #E5E5E5;
     border: none;
@@ -46,7 +46,7 @@
     line-height: normal;
     transition: all .5s;
 }
-#destination-list{
+#villeArrive-list{
     position: absolute;
     margin-top: 50px;
     list-style: none;
@@ -57,7 +57,7 @@
     border-radius: 10px;
   
 }
-#destination-list-none{
+#villeArrive-list-none{
     display: none;
 }
 
@@ -76,7 +76,7 @@
     align-items: center;
 }
 
-.depart-input {
+.villeDepart-input {
     border-radius: 5px;
     background: #E5E5E5;
     border: none;
@@ -85,7 +85,7 @@
     height: 40px;
     outline: none;
 }
-.depart-input-error {
+.villeDepart-input-error {
     border-radius: 5px;
     background: #f17c7c;
     border: none;
@@ -94,7 +94,7 @@
     height: 40px;
     outline: none;
 }
-.depart-input-error::placeholder {
+.villeDepart-input-error::placeholder {
    color: white;
 }
 
@@ -133,7 +133,7 @@
     transition: all .5s;
 }
 
-#depart-list {
+#villeDepart-list {
     position: absolute;
     margin-top: 50px;
     list-style: none;
@@ -144,6 +144,6 @@
     border-radius: 10px;
 }
 
-#depart-list-none {
+#villeDepart-list-none {
     display: none;
 }

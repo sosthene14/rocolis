@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import "./Annonces.css";
 import images from '../../assets/images/images';
 import { useState } from 'react';
+import formatDate from '../formatDate/formatDate';
 
 const Annonces = ({ data }) => {
     const [page, setPage] = useState(1);
 
-    const [pic, setPic] = useState([images.suitcase, images.travel, images.travel2]);
+    const [pic, setPic] = useState([images.SuitCase1, images.SuitCase1, images.Plane,images.Localisation,images.Journey]);
     const getRandomPic = () => {
         const randomIndex = Math.floor(Math.random() * pic.length);
         return pic[randomIndex];
     };
+   
     const itemsPerPage = 12;
     const startIndex = (page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -18,28 +20,25 @@ const Annonces = ({ data }) => {
 
     const totalPages = Math.ceil(data.length / itemsPerPage);
 
-    const formatDate = (dateString) => {
-        const [year, month, day] = dateString.split("-");
-        return `${day}/${month}/${year}`;
-      };
 
     return (
         <>
+        <div></div>
             <div className='main-annonce-div'>
-                {voyagesToDisplay.map((voyageur) => (
-                    <div className='user-annonce' key={voyageur._id} onClick={() => {
-                        window.location.href = `/detailed-ads/${voyageur._id}`
+                {voyagesToDisplay.map((voyageur,index) => (
+                    <div className='user-annonce' key={voyageur["_id"]["$oid"]} onClick={() => {
+                        window.location.href = `/detailed-ads/${voyageur["_id"]["$oid"]}`
                     }}>
                         <div >
                             <img src={getRandomPic()} alt="Image aléatoire" className='image-annonce' />
                         </div>
                         <div className='traveling-information'>
-                            <span>Salut c'est : <strong>{voyageur.nom}</strong> </span>
-                            <span>Je suis à : <strong>{voyageur.depart.toLocaleLowerCase()}</strong> actuellement</span>
-                            <span>Je voyage le : <strong>{formatDate(voyageur.dateVoyage)}</strong></span>
-                            <span>Je vais à : <strong>{voyageur.destination.toLocaleLowerCase()}</strong></span>
-                            <span>kilo dispo : <strong>{voyageur.kilosDispo}</strong></span>
-                            <span>prix kilo : <strong>{voyageur.prixKilo}</strong> FCFA/{voyageur.discutable ? "non discutable" : "discutable"}</span>
+                            <span>Salut c'est : {voyageur.nom} </span>
+                            <span>Je suis à : {voyageur.villeDepart.toLocaleLowerCase()} ({(voyageur.paysDepart)}) actuellement</span>
+                            <span>Je voyage le : {formatDate(voyageur.dateDepart)}</span>
+                            <span>Je vais à : {voyageur.villeArrive.toLocaleLowerCase()} ({(voyageur.paysArrive)})</span>
+                            <span>kilo dispo : {voyageur.kilosDispo}</span>
+                            <span>prix kilo : {voyageur.prixKilo} {voyageur.currency}/{voyageur.discutable ? "non discutable" : "discutable"}</span>
                         </div>
                     </div>
                 ))}

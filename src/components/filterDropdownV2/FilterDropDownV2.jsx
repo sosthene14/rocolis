@@ -3,16 +3,11 @@ import "./FilterDropDown.css";
 import AnnonceMadeByYou from "../../pages/annonceMadeByYou/AnnonceMadeByYou";
 import NavBar from "../navBar/NavBar";
 import _ from "lodash";
-import Cookies from "universal-cookie";
-import { decodeToken } from "react-jwt";
-import {  ThreeCircles } from 'react-loader-spinner'
+import { ThreeCircles } from "react-loader-spinner";
 
-
-const FilterDropdownV2 = ({datas}) => {
+const FilterDropdownV2 = ({ datas, email }) => {
   const [selectedFilter, setSelectedFilter] = useState("");
-  const cookies = new Cookies(null, { path: "/" });
   const [emailExist, setEmailExist] = useState(true);
-  const [email, setEmail] = useState(false);
   const [dataUser, setDataUser] = useState([]);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true); // Added loading state
@@ -25,23 +20,18 @@ const FilterDropdownV2 = ({datas}) => {
   const sortByPriceHighToLow = (a, b) => b.prixKilo - a.prixKilo;
   const sortByPriceLowToHigh = (a, b) => a.prixKilo - b.prixKilo;
   const sortByDateRecentToOld = (a, b) =>
-    new Date(b.dateVoyage) - new Date(a.dateVoyage);
+    new Date(b.dateDepart) - new Date(a.dateDepart);
   const sortByDateOldToRecent = (a, b) =>
-    new Date(a.dateVoyage) - new Date(b.dateVoyage);
+    new Date(a.dateDepart) - new Date(b.dateDepart);
   const sortByKilosAvailable = (a, b) => b.kilosDispo - a.kilosDispo;
 
   useEffect(() => {
-    if (cookies.get("jwt")) {
-      const getCockie = cookies.get("jwt");
-      const decodedToken = decodeToken(getCockie);
-      if (decodedToken.email) {
-        setEmailExist(true);
-        setEmail(decodedToken.email);
-      } else {
-        setEmailExist(false);
-      }
+    if (email !== "") {
+      setEmailExist(true);
+    } else {
+      setEmailExist(false);
     }
-  }, []);
+  }, [email]);
 
   useEffect(() => {
     if (emailExist) {
@@ -61,7 +51,7 @@ const FilterDropdownV2 = ({datas}) => {
   useEffect(() => {
     setLoading(true);
     if (datas.length === 0) {
-        setLoading(true);
+      setLoading(true);
     } else {
       setLoading(false);
     }

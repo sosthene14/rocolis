@@ -9,7 +9,7 @@ import NavBar from "../navBar/NavBar";
 import { FakeFooter } from "../fakeFooter/FakeFooter";
 import SearchForm from "../searchForm/SearchForm";
 
-const AnnonceSearched = ({ datas }) => {
+const AnnonceSearched = ({ datas,notificationData }) => {
   const [avaibleRealDatas, setAvaibleRealDatas] = useState(false);
   const [avaibleSimilarDatas, setAvaibleSimilarDatas] = useState(false);
   const [seeSpiner, setSeeSpiner] = useState(true);
@@ -18,12 +18,9 @@ const AnnonceSearched = ({ datas }) => {
   const [data, setData] = useState([]);
   const [isError, setIsError] = useState(false); // Added loading state
 
-  const { depart, destination, departureDate } = useParams();
+  const { villeDepart, villeArrive, departureDate } = useParams();
 
-  const formatDate = (dateString) => {
-    const [year, month, day] = dateString.split("-");
-    return `${day}/${month}/${year}`;
-  };
+
   useEffect(() => {
     setSeeSpiner(true);
     if (datas.length === 0) {
@@ -37,15 +34,19 @@ const AnnonceSearched = ({ datas }) => {
 
   useEffect(() => {
     go();
-  }, [destination, data]);
+  }, [villeArrive, data]);
 
+  function removeAccents(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+ 
   function go() {
     let results = _.filter(data, (voyage) => {
       return (
-        voyage.destination.toLocaleLowerCase() ===
-          destination.toLocaleLowerCase() &&
-        voyage.dateVoyage === departureDate &&
-        voyage.depart.toLocaleLowerCase() === depart.toLocaleLowerCase()
+        removeAccents(voyage.villeArrive.toLocaleLowerCase()) ===
+          removeAccents(villeArrive.toLocaleLowerCase()) &&
+        voyage.dateDepart === departureDate &&
+        removeAccents(voyage.villeDepart.toLocaleLowerCase()) === removeAccents(villeDepart.toLocaleLowerCase())
       );
     });
     setSeeSpiner(true);
@@ -60,10 +61,10 @@ const AnnonceSearched = ({ datas }) => {
 
     let low_results = _.filter(data, (voyage) => {
       return (
-        voyage.destination.toLocaleLowerCase() ===
-          destination.toLocaleLowerCase() &&
-        (departureDate === undefined || voyage.dateVoyage !== departureDate) &&
-        voyage.depart.toLocaleLowerCase() === depart.toLocaleLowerCase()
+        removeAccents(voyage.villeArrive.toLocaleLowerCase()) ===
+          removeAccents(villeArrive.toLocaleLowerCase()) &&
+        (departureDate === undefined || voyage.dateDepart !== departureDate) &&
+        removeAccents(voyage.villeDepart.toLocaleLowerCase()) === removeAccents(villeDepart.toLocaleLowerCase())
       );
     });
 
@@ -81,7 +82,7 @@ const AnnonceSearched = ({ datas }) => {
       <div style={{}}>
         <NavBar />
         <div>
-          <SearchForm datas={datas} />
+          <SearchForm datas={datas} notificationData={notificationData} />
         </div>
       </div>
 

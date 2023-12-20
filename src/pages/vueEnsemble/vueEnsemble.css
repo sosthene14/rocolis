@@ -19,23 +19,12 @@
 .vue-ensemble-div-input {
   display: flex;
   align-items: center;
-  margin-left: 50px;
-  gap: 50px;
+
   font-size: 1.4em;
   justify-content: center;
 }
-.vue-ensemble-div-input img {
-  width: 50px;
-}
-.vue-ensemble {
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  width: 400px;
-  margin: auto;
-  border-radius: 17px;
-  padding-right: 40px;
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
+
+
 
 .vue-ensemble-p {
   border: none;

@@ -6,5 +6,13 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'esnext'
+    }
+  },
+  build: {
+    target: 'esnext'
   }
 })

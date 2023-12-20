@@ -1,21 +1,54 @@
-.p-notifications{
-    color: #969696;
-    font-family: Raleway;
-    font-size: 1.2em;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 30px;
-    margin-top: 60px;
-    margin-left: 125px;
-    margin-right: 125px;
-    text-align: var(--align-text-center);
+.p-notifications {
+  color: #969696;
+  font-family: Raleway;
+  font-size: 1.2em;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 30px;
+  margin-top: 60px;
+
+  text-align: var(--align-text-center);
 }
-.btn-add-notification{
+.btn-add-notification {
+  border-radius: 7px;
+  background: #6c63ff;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  font-family: Raleway;
+  font-size: 15px;
+  width: 100px;
+  height: 30px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  transition: all 0.5s;
+  margin-top: 80px;
+  margin-left: 5px;
+}
+.btn-validate {
+  border-radius: 7px;
+  background: #6c63ff;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  font-family: Raleway;
+  font-size: 15px;
+  width: 100px;
+  height: 30px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  transition: all 0.5s;
+  height: 30px;
+  margin: 10px;
+}
+.btn-validate-update{
     border-radius: 7px;
-    background: #6C63FF;
+    background: #e863ff;
     cursor: pointer;
     border: none;
-    color: #FFF;
+    color: #fff;
     font-family: Raleway;
     font-size: 15px;
     width: 100px;
@@ -23,19 +56,34 @@
     font-style: normal;
     font-weight: 700;
     line-height: normal;
-    transition: all .5s;
-    margin-top: 80px;
-    margin-left: 5px;
-}
-.date-input_{
-    border-radius: 5px;
-    background: #E5E5E5;
-    border: none;
-    font-size: 1.5em;
+    transition: all 0.5s;
     height: 30px;
-    outline: none;
+    margin: 10px;
 }
-.label-search{
-    display: flex;
-    flex-direction: column;
+.date-input_ {
+  border-radius: 5px;
+  background: #e5e5e5;
+  border: none;
+  font-size: 1.5em;
+  height: 30px;
+  outline: none;
+}
+.label-search {
+  display: flex;
+  flex-direction: column;
+}
+.input-notifications:disabled {
+  border: none;
+  outline: none;
+}
+.render-notification{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.icon-manage-notifications{
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
 }

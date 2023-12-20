@@ -10,8 +10,8 @@ const FilterDropdown = ({ data }) => {
   };
   const sortByPriceHighToLow = (a, b) => b.prixKilo - a.prixKilo;
   const sortByPriceLowToHigh = (a, b) => a.prixKilo - b.prixKilo;
-  const sortByDateRecentToOld = (a, b) => new Date(b.dateVoyage) - new Date(a.dateVoyage);
-  const sortByDateOldToRecent = (a, b) => new Date(a.dateVoyage) - new Date(b.dateVoyage);
+  const sortByDateRecentToOld = (a, b) => new Date(b.dateDepart) - new Date(a.dateDepart);
+  const sortByDateOldToRecent = (a, b) => new Date(a.dateDepart) - new Date(b.dateDepart);
   const sortByKilosAvailable = (a, b) => b.kilosDispo - a.kilosDispo;
 
   const sortData = (filter) => {

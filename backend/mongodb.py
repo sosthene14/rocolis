@@ -1,14 +1,10 @@
 import json
-from json import dumps
 
 import bcrypt
-from bson import ObjectId
+from bson import ObjectId, json_util
 from pymongo import MongoClient
 
-client = MongoClient()
-db = client['users']
-collection = db['identity']
-collection2 = db['ads']
+
 
 
 def check_email_exists(email):
@@ -60,15 +56,79 @@ def update_personnal_data(_id, nom, prenom, mot_de_passe, telephone):
         return False
 
 
-def get_all_ads():
+def add_notifications(email, data):
+    existing_user = collection3.find_one({'email': email})
     try:
-        cursor = collection2.find()
-        result = list(cursor)
-        # Convert ObjectId to string for JSON serialization
-        result = json.loads(dumps(result, default=json_util_handler))
-        return result
+        if existing_user:
+            collection3.update_one({'email': email}, {'$set': {'data': data}})
+        else:
+            new_user = {'email': email, 'data': data}
+            collection3.insert_one(new_user)
+        return True
+    except:
+        return False
+
+
+def delete_notification(email, notification_id):
+    user_query = {'email': email}
+    user = collection3.find_one(user_query)
+    if not user:
+        return False
+
+    # Utilisez $pull pour supprimer l'élément du tableau 'data' par 'id'
+    collection3.update_one(
+        {'email': email},
+        {'$pull': {'data': {'id': notification_id}}}
+    )
+
+    return True
+
+
+def get_notifications():
+    try:
+        my_list = []
+        my_liste2 = []
+        cursor = collection3.find({"data": {"$ne": None}}, {"data": 1, "_id": 0})
+        for document in cursor:
+            data_field = document.get('data')
+            if data_field is not None:
+                my_list.append(data_field)
+        for j in my_list:
+            for k in j:
+                my_liste2.append(k)
+        return my_liste2
     except Exception as e:
-        print(f"Error in get_all_ads: {e}")
+        print(f"Error in get_validated_ads_data: {e}")
+        return []
+
+
+def get_all_users():
+    try:
+        cursor = collection.find({})
+        result = list(cursor)
+        return json.loads(json_util.dumps(result))
+    except Exception as e:
+        print(f"Error: {e}")
+        return []
+
+
+def get_validated_ads():
+    try:
+        cursor = collection2.find({"isValided": True})
+        result = list(cursor)
+        return json.loads(json_util.dumps(result))
+    except Exception as e:
+        print(f"Error in get_validated_ads: {e}")
+        return []
+
+
+def get_invalidated_ads():
+    try:
+        cursor = collection2.find({"isValided": False})
+        result = list(cursor)
+        return json.loads(json_util.dumps(result))
+    except Exception as e:
+        print(f"Error in get_validated_ads: {e}")
         return []
 
 
@@ -195,8 +255,25 @@ def check_password(input_password, hashed_password):
 def add_ads(data):
     try:
         collection2.insert_one(data)
-        return True
+        return str(data["_id"])
     except:
+        return False
+
+
+def update_is_valided(document_id):
+    object_id = ObjectId(document_id)
+    document = collection2.find_one({"_id": object_id})
+    try:
+        if document:
+            new_value = not document.get("isValided", False)
+            collection2.update_one({"_id": object_id}, {"$set": {"isValided": new_value}})
+            print(f"Document avec l'ID {object_id} mis à jour avec isValided={new_value}")
+            return True
+        else:
+            print(f"Document avec l'ID {object_id} non trouvé.")
+            return False
+    except Exception as e:
+        print(f"Erreur lors de la mise à jour : {e}")
         return False
 
 

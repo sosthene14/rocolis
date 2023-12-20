@@ -45,7 +45,7 @@
 }
 
 .detailed-ads-you {
-  width: 400px;
+  width: 450px;
   margin: auto;
   background-color: #e5e5e5;
   padding: 30px;
@@ -119,7 +119,7 @@
   font-size: 14px;
   margin-left: auto;
   padding-left: 5px;
-  height: 30px;
+  height: 37px;
 }
 .travel-detail span{
   display: flex;

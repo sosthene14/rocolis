@@ -7,7 +7,7 @@ import { Footer } from "../../components/footer/Footer";
 import UserIcon from "../../components/userIcon/UserIcon";
 import { ThreeCircles } from "react-loader-spinner";
 
-function Home({datas}) {
+function Home({datas,notificationData}) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isError, setIsError] = useState(false); // Added loading state
@@ -66,14 +66,14 @@ function Home({datas}) {
               </h1>
             </div>
             <div>
-              <SearchForm datas={datas} />
+              <SearchForm datas={datas} notificationData={notificationData} />
             </div>
 
             <div>
               <FilterDropdown data={data} />
             </div>
             {isError && (
-              <p style={{ color: "red", textAlign: "center" }}>Une erreur est survenue. Veuillez recharger la page.</p>
+              <p style={{ color: "red", textAlign: "center" }}>Il n'y a pas d'annonces disponibles</p>
             )}
             <div>
               <Footer />

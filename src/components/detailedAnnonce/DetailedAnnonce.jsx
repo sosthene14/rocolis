@@ -3,16 +3,15 @@ import NavBar from "../navBar/NavBar";
 import { FakeFooter } from "../fakeFooter/FakeFooter";
 import "./DetailedAnnonce.css";
 import images from "../../assets/images/images";
-import { Button, DatePicker, Switch } from "antd";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import _ from "lodash";
 import { ThreeCircles } from "react-loader-spinner";
 import Cookies from "universal-cookie";
-import { decodeToken } from "react-jwt";
 import SearchForm from "../searchForm/SearchForm";
-
-const DetailedAnnonce = ({ datas }) => {
+import formatDate from "../formatDate/formatDate";
+import { ObjectId } from "bson";
+const DetailedAnnonce = ({ datas, email }) => {
   const [toogleNotifications, setToogleNotification] = useState(true);
   const [seeSpiner, setSeeSpiner] = useState(true);
   const [result, setResult] = useState([]);
@@ -22,27 +21,27 @@ const DetailedAnnonce = ({ datas }) => {
   const [documentId, setDocumentId] = useState("");
   const [userId, setUserId] = useState("");
   const [isError, setIsError] = useState(false); // Added loading state
-
-  const handleToggle = () => {
-    setToogleNotification(!toogleNotifications);
-  };
-
+  const objectId = new ObjectId(_id);
+  const stringId = objectId.toString();
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [emailPublishedBy, setEmailPublishedBy] = useState("");
+  const [userName, setUserName] = useState("");
   useEffect(() => {
-    if (cookies.get("jwt")) {
-      const getCockie = cookies.get("jwt");
-      const decodedToken = decodeToken(getCockie);
-      if (decodedToken.email) {
-        getUserId(decodedToken.email);
-      }
+    if (email != "") {
+      getUserId(email);
+      getUserName(email);
     }
-  }, []);
+  }, [email]);
   useEffect(() => {
-
-    if (documentId != "") {
-      
-      updateView();
+    if (emailPublishedBy != "") {
+      getSellerPhone(emailPublishedBy);
     }
-  }, [documentId,userId]);
+  }, [emailPublishedBy]);
+  useEffect(() => {
+    if (documentId["$oid"] != "" && userId != "") {
+      updateView(userId, documentId["$oid"]);
+    }
+  }, [documentId, userId]);
   function getUserId(email) {
     fetch("http://127.0.0.1:5000/api/get-user-id", {
       method: "POST",
@@ -53,10 +52,47 @@ const DetailedAnnonce = ({ datas }) => {
     }).then((response) => {
       if (response.ok) {
         response.json().then((data) => {
-          setUserId(data._id);
+          setUserId(data["_id"]);
         });
       }
     });
+  }
+  function getSellerPhone(email) {
+    fetch("http://127.0.0.1:5000/api/get-stats", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: email }),
+    }).then((response) => {
+      if (response.ok) {
+        response.json().then((data) => {
+          setPhoneNumber("+" + data["telephone"]);
+        });
+      }
+    });
+  }
+  function getUserName(email) {
+    fetch("http://127.0.0.1:5000/api/get-stats", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: email }),
+    }).then((response) => {
+      if (response.ok) {
+        response.json().then((data) => {
+          setUserName(data["prenom"]);
+        });
+      }
+    });
+  }
+  const adsLinks = `http://localhost:5173${window.location.pathname}`;
+
+  const message = `Bonjour je suis ${userName} et je suis intéressé par votre annonce: ${adsLinks}`;
+  const encodedMessage = encodeURIComponent(message);
+  function contactWhatsapp() {
+    window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`);
   }
   useEffect(() => {
     setSeeSpiner(true);
@@ -67,7 +103,6 @@ const DetailedAnnonce = ({ datas }) => {
     }
     setSeeSpiner(false);
     setData(datas);
-   
   }, [datas]);
 
   useEffect(() => {
@@ -77,12 +112,14 @@ const DetailedAnnonce = ({ datas }) => {
   }, [_id, data]);
 
   function go() {
-    let results = _.filter(data, { _id: _id });
+    const results = data.filter((item) => item._id.$oid.toString() === _id);
+
     setSeeSpiner(true);
     if (results.length === 0) {
     } else {
       setDocumentId(results[0]["_id"]);
       setResult(results);
+      setEmailPublishedBy(results[0]["publishedBy"]);
     }
     setSeeSpiner(false);
   }
@@ -103,7 +140,7 @@ const DetailedAnnonce = ({ datas }) => {
     });
   }
 
-  function updateView() {
+  function updateView(userId, documentId) {
     fetch("http://127.0.0.1:5000/api/add-who-seen", {
       method: "POST",
       headers: {
@@ -116,11 +153,6 @@ const DetailedAnnonce = ({ datas }) => {
       }
     });
   }
-  const formatDate = (dateString) => {
-    const [year, month, day] = dateString.split("-");
-    return `${day}/${month}/${year}`;
-  };
-
   return (
     <div>
       <NavBar />
@@ -166,9 +198,10 @@ const DetailedAnnonce = ({ datas }) => {
             style={{
               width: "400px",
               margin: "auto",
-              backgroundColor: "#E5E5E5",
+              backgroundColor: "#f8f9fa",
               padding: "30px",
               borderRadius: "17px",
+              boxShadow: 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px'
             }}
           >
             {result.map((voyageur) => (
@@ -177,31 +210,59 @@ const DetailedAnnonce = ({ datas }) => {
                   Nom du Voyageur : <span>{voyageur.nom}</span>
                 </span>
                 <span>
-                  Ville de départ : <span>{voyageur.depart.toLocaleLowerCase()} </span>
+                  Ville de départ :{" "}
+                  <span>
+                    {voyageur.villeDepart.toLocaleLowerCase()} (
+                    {voyageur.paysDepart})
+                  </span>
                 </span>
                 <span>
-                  Date de départ : <span>{formatDate(voyageur.dateVoyage)} </span>
+                  Date de départ :{" "}
+                  <span>{formatDate(voyageur.dateDepart)} </span>
                 </span>
                 <span style={{ textAlign: "left" }}>
-                  Date d'arrivée : <span>{formatDate(voyageur.dateArrive)}</span>
+                  Date d'arrivée :{" "}
+                  <span>{formatDate(voyageur.dateArrive)}</span>
                 </span>
                 <span>
-                  Ville d'arrivée : <span> {voyageur.destination.toLocaleLowerCase()}</span>
+                  Ville d'arrivée :{" "}
+                  <span>
+                    {" "}
+                    {voyageur.villeArrive.toLocaleLowerCase()} (
+                    {voyageur.paysArrive})
+                  </span>
                 </span>
                 <span>
                   Kilos dispo : <span> {voyageur.kilosDispo}</span>
                 </span>
                 <span>
-                  Prix du kg : <span> {voyageur.prixKilo}</span>
-                </span>
-                <span>
-                  Contraintes : <span> {voyageur.contraintes}</span>
+                  Prix du kg :{" "}
+                  <span>
+                    {" "}
+                    {voyageur.prixKilo} {voyageur.currency}
+                  </span>
                 </span>
                 <span>
                   Discutable : <span> {voyageur.discutable}</span>
                 </span>
                 <span>
-                  Description : <span> {voyageur.description}</span>
+                  Contraintes :{" "}
+                  <span>
+                    {" "}
+                    {voyageur.contraintes == null || voyageur.contraintes == ""
+                      ? "Aucune"
+                      : voyageur.contraintes}
+                  </span>
+                </span>
+
+                <span>
+                  Description :{" "}
+                  <span>
+                    {" "}
+                    {voyageur.description == null || voyageur.description == ""
+                      ? "Aucune"
+                      : voyageur.description}
+                  </span>
                 </span>
               </div>
             ))}
@@ -219,8 +280,12 @@ const DetailedAnnonce = ({ datas }) => {
         >
           <h4 className="contacter-vendeur">Contacter le vendeur</h4>
           <div style={{ display: "flex", gap: "15px" }}>
-            <img src={images.OutgoingCall} className="contact-img" />
-            <img src={images.whatsapImage} className="contact-img" />
+            <img src={images.OutgoingCall} className="contact-img w-14" />
+            <img
+              src={images.whatsapImage}
+              className="contact-img w-14"
+              onClick={() => contactWhatsapp()}
+            />
           </div>
         </div>
       </div>
