@@ -31,7 +31,7 @@ const SearchForm = ({ datas }) => {
   }, [email]);
   const getNotifications = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/get-notifications", {
+      const response = await fetch("http://192.168.1.10:5000/api/get-notifications", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -37,10 +37,12 @@ const TravelerSearchFormDestination = ({
     }
   }, [email, notificationData,otherSuggestion]);
 
-
+  function removeAccents(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
 
   const handleSearchs = (e) => {
-    const term = e.target.value;
+    const term = removeAccents(e.target.value.trim());
     setSearchTerm(term);
     const uniqueDestinations = new Set();
 
@@ -49,19 +51,19 @@ const TravelerSearchFormDestination = ({
       setSearchResults([]);
     } else {
       const filteredResults = data.filter((element) =>
-        element.villeArrive.toLowerCase().includes(term.toLowerCase())
+        removeAccents(element.villeArrive.toLowerCase()).includes(term.toLowerCase())
       );
      
       const filteredResults2 = otherSuggestion.filter((element) =>
-        element.villeArrive.toLowerCase().includes(term.toLowerCase())
+        removeAccents(element.villeArrive.toLowerCase()).includes(term.toLowerCase())
       );
 
       filteredResults.forEach((element) => {
-        uniqueDestinations.add(element.villeArrive.toLowerCase());
+        uniqueDestinations.add(removeAccents(element.villeArrive.toLowerCase()));
       });
 
       filteredResults2.forEach((element) => {
-        uniqueDestinations.add(element.villeArrive.toLowerCase());
+        uniqueDestinations.add(removeAccents(element.villeArrive.toLowerCase()));
       });
       if (data.length > 0) {
         setSearchResults(uniqueDestinations);
@@ -136,7 +138,7 @@ const TravelerSearchFormDestination = ({
                 id="input-dest"
                 ref={input_destination}
                 className={
-                  onErrorFieldDest ? "villeDepart-input-error" : "villeDepart-input"
+                  onErrorFieldDest ? "w-40 text-sm rounded-lg bg-rose-100 text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none" : "w-40 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
                 }
                 type="text"
                 value={villeArrive}
@@ -172,7 +174,7 @@ const TravelerSearchFormDestination = ({
                 )}
                 {destinationNotAvailable && (
                   <p style={{ color: "red" }}>
-                    Il semble que cette villeArrive ne soit pas encore
+                    Il semble que cette ville d'arrivée ne soit pas encore
                     disponible.
                   </p>
                 )}

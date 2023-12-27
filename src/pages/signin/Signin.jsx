@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from 'react'
 import ValidationCodePage from '../validation_code_sent/ValidationCodePage'
 import Cookies from 'universal-cookie';
 import { useJwt, decodeToken, isExpired } from "react-jwt";
+import ForgottenPassword from '../forgottenPassword/ForgottenPassword'
 
 function Signin() {
     const email = useRef()
@@ -30,7 +31,7 @@ function Signin() {
       },[cookies])
     const getToken = async () => {
         try {
-          const response = await fetch('http://127.0.0.1:5000/api/send-jwt', {
+          const response = await fetch('http://192.168.1.10:5000/api/send-jwt', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -76,7 +77,7 @@ function Signin() {
         };
         sessionStorage.setItem("email",email.current.value)
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/check-signed', {
+            const response = await fetch('http://192.168.1.10:5000/api/check-signed', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -102,7 +103,7 @@ function Signin() {
     const checkVerification = async () => {
         setSeeSpiner(true);
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/check-is-verified', {
+            const response = await fetch('http://192.168.1.10:5000/api/check-is-verified', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -131,7 +132,7 @@ function Signin() {
     async function getVerificationCode() {
         setSeeSpiner(true);
         try {
-            const response = await fetch('http://127.0.0.1:5000/confirmation_code', {
+            const response = await fetch('http://192.168.1.10:5000/confirmation_code', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -198,7 +199,7 @@ function Signin() {
                                         }
                                         <div>
                                             <input type="password" name="password" placeholder="mot de passe" ref={password} required />
-                                            <p style={{ marginTop: "10px" }}><a href="">Mot de passe oublié ?</a></p>
+                                            <p style={{ marginTop: "10px",cursor:"pointer" }} onClick={() => {setVerificationPage(true) }}><a>Mot de passe oublié ?</a></p>
                                             <span id={errorUnknowUser ? 'error_password' : "error_password_invisible"}>Utilisateur inconnu</span>
 
                                             <span id={!userVerified ? 'error_password' : "error_password_invisible"} onClick={() => {
@@ -223,7 +224,7 @@ function Signin() {
                     </div>
                 </div>
             ) : (<div>
-                <ValidationCodePage code={codeValidation} email={sessionStorage.getItem("email")} />
+                <ForgottenPassword />
             </div>)
 
         }

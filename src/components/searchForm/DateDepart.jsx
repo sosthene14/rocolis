@@ -11,11 +11,11 @@ const DateDepart = ({ date_depart,onErrorFieldDateDprt,removeErrorDate }) => {
         <input
           ref={date_depart}
           type="date"
-          className={onErrorFieldDateDprt ? "date-input-error":'date-input'}
+          className="w-40 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
           value={departureDate}
           onClick={removeErrorDate}
           onChange={(e) => setDepartureDate(e.target.value)}
-          required
+        placeholder='Date de depart'
         />
       </label></form>
     </div>

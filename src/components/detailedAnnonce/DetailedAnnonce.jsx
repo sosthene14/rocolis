@@ -43,7 +43,7 @@ const DetailedAnnonce = ({ datas, email }) => {
     }
   }, [documentId, userId]);
   function getUserId(email) {
-    fetch("http://127.0.0.1:5000/api/get-user-id", {
+    fetch("http://192.168.1.10:5000/api/get-user-id", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -58,7 +58,7 @@ const DetailedAnnonce = ({ datas, email }) => {
     });
   }
   function getSellerPhone(email) {
-    fetch("http://127.0.0.1:5000/api/get-stats", {
+    fetch("http://192.168.1.10:5000/api/get-stats", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -73,7 +73,7 @@ const DetailedAnnonce = ({ datas, email }) => {
     });
   }
   function getUserName(email) {
-    fetch("http://127.0.0.1:5000/api/get-stats", {
+    fetch("http://192.168.1.10:5000/api/get-stats", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -125,7 +125,7 @@ const DetailedAnnonce = ({ datas, email }) => {
   }
 
   function getPublishedBy(email) {
-    fetch("http://127.0.0.1:5000/api/get-user-name", {
+    fetch("http://192.168.1.10:5000/api/get-user-name", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -141,7 +141,7 @@ const DetailedAnnonce = ({ datas, email }) => {
   }
 
   function updateView(userId, documentId) {
-    fetch("http://127.0.0.1:5000/api/add-who-seen", {
+    fetch("http://192.168.1.10:5000/api/add-who-seen", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -20,7 +20,6 @@ const ValidationCodePage = (code, email) => {
       const decodedToken = decodeToken(token)
       const expirationDate = new Date();
       expirationDate.setFullYear(expirationDate.getFullYear() + 10); // Ajouter 10 ans
-
       cookies.set('jwt', token, {
         expires: expirationDate,
       });
@@ -36,7 +35,7 @@ const ValidationCodePage = (code, email) => {
   }, [token]);
   const makeVerified = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/make-verified', {
+      const response = await fetch('http://192.168.1.10:5000/api/make-verified', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -56,7 +55,7 @@ const ValidationCodePage = (code, email) => {
 
   const getToken = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/send-jwt', {
+      const response = await fetch('http://192.168.1.10:5000/api/send-jwt', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -134,7 +133,7 @@ const ValidationCodePage = (code, email) => {
         </div>
       </div>
       <div className='check-button-div'>
-        <button className='check-button' onClick={() => {
+        <button className='check-button mb-5' onClick={() => {
           checkCodeValidity()
         }}>Vérifier</button>
       </div>

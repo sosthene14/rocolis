@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./FilterDropDown.css";
 import AnnonceMadeByYou from "../../pages/annonceMadeByYou/AnnonceMadeByYou";
+import MyAdd from "../searchForm/myAdd/MyAdd";
 import NavBar from "../navBar/NavBar";
 import _ from "lodash";
 import { ThreeCircles } from "react-loader-spinner";
+import SearchForm from "../searchForm/SearchForm";
+import { FakeFooter } from "../fakeFooter/FakeFooter";
 
 const FilterDropdownV2 = ({ datas, email }) => {
   const [selectedFilter, setSelectedFilter] = useState("");
@@ -84,6 +87,7 @@ const FilterDropdownV2 = ({ datas, email }) => {
       <h1 className="detailed-ads-text" style={{ marginTop: "40px" }}>
         Mes annonces
       </h1>
+      <SearchForm datas={datas} />
       {loading ? (
         <div className="loader-div">
           <ThreeCircles
@@ -104,7 +108,7 @@ const FilterDropdownV2 = ({ datas, email }) => {
           <div className="filter-div">
             <label htmlFor="filterDropdown"></label>
             <select
-              id="filterDropdown"
+              className="shadow-md w-96 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
               value={selectedFilter}
               onChange={handleFilterChange}
             >
@@ -127,7 +131,51 @@ const FilterDropdownV2 = ({ datas, email }) => {
           </div>
           <br />
           <br />
-          <AnnonceMadeByYou data={sortedData} />
+          <div  className="flex flex-wrap justify-center gap-10">
+            {sortedData.map((data, index) => (
+              <div key={index}>
+                <MyAdd
+                  key={index}
+                  datas={sortedData}
+                  email={email}
+                  description={data.description}
+                  contraintes={data.contraintes}
+                  kilosDispo={data.kilosDispo}
+                  prixKilo={data.prixKilo}
+                  dateDepart={data.dateDepart}
+                  dateArrive={data.dateArrive}
+                  saveCountryDepart={data.saveCountryDepart}
+                  nom={data.nom}
+                  saveStateDepart={data.saveStateDepart}
+                  paysDepartId={data.paysDepartId}
+                  paysArriveId={data.paysArriveId}
+                  villeDepartId={data.villeDepartId}
+                  villeArriveId={data.villeArriveId}
+                  etatDepartId={data.etatDepartId}
+                  etatArriveId={data.etatArriveId}
+                  villeDepartNom={data.villeDepart}
+                  villeArriveNom={data.villeArrive}
+                  paysDepartNom={data.paysDepart}
+                  paysArriveNom={data.paysArrive}
+                  etatDepartNom={data.etatDepart}
+                  etatArriveNom={data.etatArrive}
+                  saveCityDepart={data.saveCityDepart}
+                  saveCountryArrive={data.saveCountryArrive}
+                  saveStateArrive={data.saveStateArrive}
+                  saveCityArrive={data.saveCityArrive}
+                  discutable={data.discutable}
+                  onloadCurrency_={{
+                    value: data.currency,
+                    label: data.labelCurrency,
+                  }}
+                  _id={data._id}
+                />
+              </div>
+            ))}
+          </div>
+          <div style={{}}>
+            <FakeFooter />
+          </div>
         </>
       )}
     </>

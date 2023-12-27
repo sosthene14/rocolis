@@ -76,7 +76,7 @@ const VueEnsemble = ({ datas, email }) => {
 
   const getPersonnalData = async (email) => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/get-stats", {
+      const response = await fetch("http://192.168.1.10:5000/api/get-stats", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -113,7 +113,7 @@ const VueEnsemble = ({ datas, email }) => {
     setSeeSpiner(true);
     try {
       const response = await fetch(
-        "http://127.0.0.1:5000/api/update-personnal-data",
+        "http://192.168.1.10:5000/api/update-personnal-data",
         {
           method: "POST",
           headers: {
@@ -270,7 +270,7 @@ const VueEnsemble = ({ datas, email }) => {
                 className={
                   validePhoneNumber
                     ? "w-60 sm:w-72 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
-                    : "shadow-md w-60 sm:w-72 text-sm rounded-lg bg-rose-100 text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
+                    : "w-60 sm:w-72 text-sm rounded-lg bg-rose-100 text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
                 }
                 type="number"
                 value={data.telephone || ""}
@@ -302,6 +302,7 @@ const VueEnsemble = ({ datas, email }) => {
         <div style={{ display: "flex", justifyContent: "center" }} ref={modify}>
           <button
             className="vue-ensemble-btn"
+            style={{ backgroundColor: "#6C63FF" }}
             onClick={handleModifications}
             type="submit"
           >

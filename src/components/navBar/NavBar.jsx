@@ -6,7 +6,7 @@ import UserIcon from '../userIcon/UserIcon'
 const NavBar = () => {
   return (
     <div className='div-nav'>
-      <span className='notification-number'>12</span>
+
       <div>
         <UserIcon />
       </div>

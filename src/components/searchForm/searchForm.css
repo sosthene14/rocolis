@@ -78,12 +78,13 @@
 
 .villeDepart-input {
     border-radius: 5px;
-    background: #E5E5E5;
+    background-color: "#f8f9fa";
     border: none;
     padding-left: 15px;
     font-size: 1em;
     height: 40px;
     outline: none;
+    color:"black"
 }
 .villeDepart-input-error {
     border-radius: 5px;

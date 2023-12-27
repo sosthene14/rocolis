@@ -11,7 +11,7 @@ function GetAllVerifiedAd({ ads }) {
       },
       body: JSON.stringify({ document_id: _id }),
     };
-    fetch("http://127.0.0.1:5000/api/update-is-valided", requestOptions)
+    fetch("http://192.168.1.10:5000/api/update-is-valided", requestOptions)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);

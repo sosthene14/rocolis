@@ -22,7 +22,7 @@ const CodeVerificationMessage = ({ email, onSendData }) => {
     }
   }, [email]);
   const getValidationCode = () => {
-    fetch("http://127.0.0.1:5000/api/changing-information", {
+    fetch("http://192.168.1.10:5000/api/changing-information", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -75,6 +75,7 @@ const CodeVerificationMessage = ({ email, onSendData }) => {
         <span style={{ color: "red",textAlign: "center",fontSize: "12px" }}>{canModify ? "" : "Code incorrect"}</span><br/>
         <button
           type="submit"
+          style={{ backgroundColor: "#6C63FF" }}
           className="vue-ensemble-btn"
           onClick={(e) => {
             handleSubmit(e);

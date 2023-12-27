@@ -2,7 +2,12 @@
 export default {
   content: ['./src/**/*.{vue,js,ts,jsx,tsx}', './index.html'],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        "violet-hover": "#a19cff",
+        "violet-active": "#6c63ff",
+      }
+    },
   },
   plugins: [],
 }

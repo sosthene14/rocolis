@@ -76,7 +76,7 @@ function Signup() {
     setSeeSpiner(true);
     handleSpinnerDelay();
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/post-data", {
+      const response = await fetch("http://192.168.1.10:5000/api/post-data", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -15,7 +15,8 @@ import ContactUs from "./pages/contact/ContactUs";
 import PublishAdd from "./pages/publishAd/PublishAdd";
 import ManageNotification from "./pages/manageNotification/ManageNotification";
 import Admin from "./pages/admin/Admin";
-
+import "./components/searchForm/myAdd/countryHandler.css";
+import checkTokenValidity from "./components/checkToken/checkToken";
 function App() {
   const cookies = new Cookies(null, { path: "/" });
   const [seeRoute, setSeeRoute] = useState(true);
@@ -32,7 +33,7 @@ function App() {
   const publishAdd = <PublishAdd datas={data} email={email} />;
   const manageNotification = <ManageNotification email={email} />;
   const notFound = <Page404 />;
-  const admin = <Admin verifiedAds={data} email={email} />
+  const admin = <Admin verifiedAds={data} email={email} />;
 
   useEffect(() => {
     try {
@@ -41,6 +42,7 @@ function App() {
         const decodedToken = decodeToken(getCockie);
         setEmail(decodedToken.email);
         if (decodedToken.logged === true) {
+          chekIkToken(decodedToken.email, decodedToken._ik);
           setSeeRoute(true);
         } else {
           setSeeRoute(false);
@@ -52,19 +54,43 @@ function App() {
       }
     } catch (error) {
       cookies.remove("jwt");
-      console.error(
-        "Une erreur s'est produite lors de la gestion des cookies:",
-        error
-      );
+      window.location.href = "/signin";
     }
   }, []);
+
+  const chekIkToken = async (email, ik) => {
+    try {
+      const response = await fetch("http://192.168.1.10:5000/api/check-ik", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          ik: ik,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (!data.response) {
+          cookies.remove("jwt");
+          window.location.href = "/signin";
+        }
+      } else {
+        console.error("Erreur lors de la requête HTTP :", response.status);
+      }
+    } catch (error) {
+      console.error("Erreur inattendue :", error);
+    }
+  };
 
   useEffect(() => {
     getAllAds();
   }, []);
   const getAllAds = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/get-all-ads", {
+      const response = await fetch("http://192.168.1.10:5000/api/get-all-ads", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

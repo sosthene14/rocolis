@@ -6,8 +6,12 @@ import SearchForm from "../../components/searchForm/SearchForm";
 import Cookies from "universal-cookie";
 import { useJwt, decodeToken, isExpired } from "react-jwt";
 import Select from "react-select";
-import { Country, State, City } from "country-state-city";
-import Selector from "./Selector";
+import {
+  CitySelect,
+  CountrySelect,
+  StateSelect,
+} from "react-country-state-city";
+import remplacerEspacesParTirets from "../../components/removeSpace/removeSpace";
 
 function PublishAdd({ datas, email }) {
   const [data, setData] = useState([]);
@@ -16,20 +20,29 @@ function PublishAdd({ datas, email }) {
   const [error, setError] = useState(false);
   const [succes, setSucces] = useState(false);
   const [id, setId] = useState("");
-  const devise = useRef();
   const [selectedOption, setSelectedOption] = useState(null);
+  const [paysDepartId, setPaysDepartId] = useState();
+  const [paysArriveId, setPaysArriveId] = useState();
+  const [etatDepartId, setEtatDepartId] = useState();
+  const [etatArriveId, setEtatArriveId] = useState();
+  const [villeDepartId, setVilleDepartId] = useState();
+  const [villeArriveId, setVilleArriveId] = useState();
+  const [paysDepartNom, setPaysDepartNom] = useState();
+  const [paysArriveNom, setPaysArriveNom] = useState();
+  const [etatDepartNom, setEtatDepartNom] = useState();
+  const [etatArriveNom, setEtatArriveNom] = useState();
+  const [villeDepartNom, setVilleDepartNom] = useState();
+  const [villeArriveNom, setVilleArriveNom] = useState();
+  const [saveCountryDepart, setSaveCountryDepart] = useState([]);
+  const [saveStateDepart, setSaveStateDepart] = useState([]);
+  const [saveCityDepart, setSaveCityDepart] = useState([]);
+  const [saveCountryArrive, setSaveCountryArrive] = useState([]);
+  const [saveStateArrive, setSaveStateArrive] = useState([]);
+  const [saveCityArrive, setSaveCityArrive] = useState([]);
 
   useEffect(() => {
-    localStorage.setItem("countryDepartName", 0);
-    localStorage.setItem("countryArriveName", 0);
-  },[])
-
-  const indexOfDepartCountryValue = localStorage.getItem("countryDepartName");
-  const indexOfArriveCountry = localStorage.getItem("countryArriveName");
-  const indexOfDepartState = localStorage.getItem("indexOfDepartState");
-  const indexOfArriveState = localStorage.getItem("indexOfArriveState");
-  const indexOfDepartCity = localStorage.getItem("indexOfDepartCity");
-  const indexOfArriveCity = localStorage.getItem("indexOfArriveCity");
+    console.log(saveCountryDepart);
+  }, [saveCountryDepart]);
 
   useEffect(() => {
     const selectedOption = { value: "XAF", label: "XAF (CFA)" };
@@ -37,126 +50,49 @@ function PublishAdd({ datas, email }) {
     localStorage.setItem("selectedOption", selectedOptionString);
   }, [selectedOption]);
 
-  let countryData = Country.getAllCountries();
-  let countryData2 = Country.getAllCountries();
-  const [stateData, setStateData] = useState();
-  const [cityData, setCityData] = useState();
-
-  const [stateData2, setStateData2] = useState();
-  const [cityData2, setCityData2] = useState();
-
-  const [country, setCountry] = useState(
-    countryData[indexOfDepartCountryValue]
-      ? countryData[indexOfDepartCountryValue]
-      : countryData[0]
-  );
-  const [state, setState] = useState();
-  const [city, setCity] = useState();
-  const [country2, setCountry2] = useState(
-    countryData2[indexOfArriveCountry]
-      ? countryData2[indexOfArriveCountry]
-      : countryData2[0]
-  );
-  const [state2, setState2] = useState();
-  const [city2, setCity2] = useState();
-
-  useEffect(() => {
-    if (stateData && stateData.length > 0) {
-      setState(stateData[indexOfDepartState]);
-    }
-  }, [stateData, indexOfDepartState]);
-
-  useEffect(() => {
-    if (cityData && cityData.length > 0) {
-      setCity(cityData[indexOfDepartCity]);
-    }
-  }, [cityData, indexOfDepartCity]);
-
-  useEffect(() => {
-    if (stateData2 && stateData2.length > 0) {
-      setState2(stateData2[indexOfArriveState]);
-    }
-  }, [stateData2, indexOfArriveState]);
-
-  useEffect(() => {
-    if (cityData2 && cityData2.length > 0) {
-      setCity2(cityData2[indexOfArriveCity]);
-    }
-  }, [cityData2, indexOfArriveCity]);
-
-  useEffect(() => {
-    setStateData(State.getStatesOfCountry(country?.isoCode));
-    localStorage.setItem("countryDepartName", countryData.indexOf(country));
-  }, [country]);
-
-  useEffect(() => {
-    setStateData2(State.getStatesOfCountry(country2?.isoCode));
-    localStorage.setItem("countryArriveName", countryData2.indexOf(country2));
-  }, [country2]);
-
-  useEffect(() => {
-    setCityData(City.getCitiesOfState(country?.isoCode, state?.isoCode));
-    if (stateData) {
-      localStorage.setItem("indexOfDepartState", stateData.indexOf(state));
-    }
-  }, [state]);
-
-  useEffect(() => {
-    setCityData2(City.getCitiesOfState(country2?.isoCode, state2?.isoCode));
-    if (stateData2) {
-      localStorage.setItem("indexOfArriveState", stateData2.indexOf(state2));
-    }
-  }, [state2]);
-
-  useEffect(() => {
-    stateData && setState(stateData[0]);
-  }, [stateData]);
-
-  useEffect(() => {
-    stateData2 && setState2(stateData2[0]);
-  }, [stateData2]);
-
-  useEffect(() => {
-    cityData && setCity(cityData[0]);
-  }, [cityData]);
-
-  useEffect(() => {
-    cityData2 && setCity2(cityData2[0]);
-  }, [cityData2]);
-
-  useEffect(() => {
-    if (cityData) {
-      localStorage.setItem("indexOfDepartCity", cityData.indexOf(city));
-    }
-  }, [city]);
-  useEffect(() => {
-    if (cityData2) {
-      localStorage.setItem("indexOfArriveCity", cityData2.indexOf(city2));
-    }
-  }, [city2]);
-
-  const hanldeDatas = (name, e) => {
+  const handleDatas = (name, value) => {
     setData({
       ...data,
-      [name]: e.target.value,
+      [name]: value,
       view: 0,
-      paysDepart: country.name,
-      paysArrive: country2.name,
-      etatDepart: stateData.length > 0 ? state.name : country.name,
-      etatArrive: stateData2.length > 0 ? state2.name : country2.name,
-      villeDepart:
-        cityData.length > 0
-          ? city.name
-          : stateData.length > 0
-          ? state.name
-          : country.name,
-      villeArrive:
-        cityData.length > 0
-          ? city2.name
-          : stateData2.length > 0
-          ? state2.name
-          : country2.name,
+      paysDepartId: paysDepartId,
+      paysArriveId: paysArriveId,
+      etatDepartId: etatDepartId ? etatDepartId : 0,
+      etatArriveId: etatArriveId ? etatArriveId : 0,
+      villeDepartId: villeDepartId ? villeDepartId : 0,
+      villeArriveId: villeArriveId ? villeArriveId : 0,
+      etatDepart: remplacerEspacesParTirets(etatDepartNom)
+        ? remplacerEspacesParTirets(etatDepartNom)
+        : remplacerEspacesParTirets(paysDepartNom)
+        ? remplacerEspacesParTirets(paysDepartNom)
+        : "fr",
+      villeDepart: remplacerEspacesParTirets(villeDepartNom)
+        ? remplacerEspacesParTirets(villeDepartNom)
+        : remplacerEspacesParTirets(etatDepartNom)
+        ? remplacerEspacesParTirets(etatDepartNom)
+        : remplacerEspacesParTirets(paysDepartNom)
+        ? remplacerEspacesParTirets(paysDepartNom)
+        : "fr",
+      villeArrive: remplacerEspacesParTirets(villeArriveNom)
+        ? remplacerEspacesParTirets(villeArriveNom)
+        : remplacerEspacesParTirets(etatArriveNom)
+        ? remplacerEspacesParTirets(etatArriveNom)
+        : remplacerEspacesParTirets(paysArriveNom)
+        ? remplacerEspacesParTirets(paysArriveNom)
+        : "fr",
+      etatArrive: remplacerEspacesParTirets(etatArriveNom)
+        ? remplacerEspacesParTirets(etatArriveNom)
+        : remplacerEspacesParTirets(paysArriveNom)
+        ? remplacerEspacesParTirets(paysArriveNom)
+        : "fr",
+      saveCountryDepart: saveCountryDepart,
+      saveStateDepart: saveStateDepart,
+      saveCityDepart: saveCityDepart,
+      saveCountryArrive: saveCountryArrive,
+      saveStateArrive: saveStateArrive,
+      saveCityArrive: saveCityArrive,
       currency: selectedOption?.value,
+      labelCurrency: selectedOption?.label,
       isValided: false,
       discutable: discutable.current.value ? discutable.current.value : "non",
     });
@@ -176,8 +112,18 @@ function PublishAdd({ datas, email }) {
     }
   }, [id]);
 
+  const handleError = () => {
+    setTimeout(() => {
+      setError(false);
+    }, 2000);
+  };
+  useEffect(() => {
+    if (error) {
+      handleError();
+    }
+  }, [error]);
   const handleConfirmationReceived = () => {
-    fetch("http://127.0.0.1:5000/api/send-confirmation-ads-received", {
+    fetch("http://192.168.1.10:5000/api/send-confirmation-ads-received", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -213,9 +159,12 @@ function PublishAdd({ datas, email }) {
 
   const handleAdd = async (e) => {
     e.preventDefault();
-    console.log(data);
-    try {
-      const response = await fetch("http://127.0.0.1:5000/api/ads-ad", {
+    if (data.villeDepart === "fr" || data.villeArrive === "fr") {
+      setError(true);
+      return;
+    } else {
+      try {
+      const response = await fetch("http://192.168.1.10:5000/api/ads-ad", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -234,6 +183,7 @@ function PublishAdd({ datas, email }) {
     } catch (error) {
       alert("Une erreur s'est produite");
       console.error("Une erreur s'est produite :", error.message);
+    }
     }
   };
 
@@ -267,6 +217,7 @@ function PublishAdd({ datas, email }) {
   return (
     <div>
       <NavBar />
+
       <div>
         <h1 className="detailed-ads-text" style={{ marginTop: "40px" }}>
           Ajouter une annonce
@@ -287,7 +238,7 @@ function PublishAdd({ datas, email }) {
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-gray-500 dark:text-gray-500 "
+                className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500 "
               >
                 Nom du voyageur
               </label>
@@ -297,7 +248,7 @@ function PublishAdd({ datas, email }) {
                 className="shadow-md w-60 sm:w-72 text-sm rounded-lg  text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none "
                 required
                 value={data.nom || ""}
-                onChange={(e) => hanldeDatas("nom", e)}
+                onChange={(e) => handleDatas("nom", e.target.value)}
                 pattern="[A-Za-zÀ-ÿ\s]{2,20}"
                 title="Uniquement des lettres de l'alphabet français, les accents ne sont pas acceptés, 2 caractères minimum "
               />
@@ -306,36 +257,64 @@ function PublishAdd({ datas, email }) {
               <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
                 Pays (départ)
               </p>
-              <Selector
-                data={countryData}
-                selected={country}
-                setSelected={setCountry}
+              <CountrySelect
+                showFlag={true}
+                countryid={paysDepartId}
+                onChange={(e) => {
+                  const functionsToCall = [
+                    () => console.log(e),
+                    () => handleDatas("paysDepart", e.name),
+                    () => setPaysDepartNom(e.name),
+                    () => setPaysDepartId(e.id),
+                    () => setSaveCountryDepart(...saveCountryDepart, e),
+                  ];
+
+                  functionsToCall.forEach((func) => func());
+                }}
+                placeHolder="Pays"
               />
             </div>
-            {state && (
-              <div>
-                <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
-                  Etat ou departement (départ)
-                </p>
-                <Selector
-                  data={stateData}
-                  selected={state}
-                  setSelected={setState}
-                />
+
+            <div>
+              <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
+                Etat ou departement (départ)
+              </p>
+              <StateSelect
+                countryid={paysDepartId}
+                onChange={(e) => {
+                  console.log(e);
+                  setEtatDepartNom(e.name);
+                  setEtatDepartId(e.id);
+                  setSaveStateDepart(...saveStateDepart, e);
+                }}
+                placeHolder="Etat ou departement"
+              />
+            </div>
+            {error ? (
+              <div
+                style={{ backgroundColor: "#f8f9fa" }}
+                className="text-red-500 absolute shadow-md rounded-xl p-10 top-1/2 mt-72 text-center z-50 left-1/2 transform -translate-x-1/2 -translate-y-1/2 "
+              >
+                <p>Veuillez remplir au moins les noms des pays</p>
               </div>
-            )}
-            {city && (
-              <div>
-                <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
-                  Ville (départ)
-                </p>
-                <Selector
-                  data={cityData}
-                  selected={city}
-                  setSelected={setCity}
-                />
-              </div>
-            )}
+            ) : null}
+            <div>
+              <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
+                Ville (départ)
+              </p>
+              <CitySelect
+                countryid={paysDepartId}
+                style={{ width: "100%", height: "40px" }}
+                stateid={etatDepartId}
+                onChange={(e) => {
+                  setVilleDepartId(e.id);
+                  setVilleDepartNom(e.name);
+                  setSaveCityDepart(...saveCityDepart, e);
+                }}
+                placeHolder="ville"
+              />
+            </div>
+
             <div>
               <label
                 htmlFor="name"
@@ -347,7 +326,7 @@ function PublishAdd({ datas, email }) {
                 className="shadow-md w-60 sm:w-72 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none "
                 type="date"
                 value={data.dateDepart || ""}
-                onChange={(e) => hanldeDatas("dateDepart", e)}
+                onChange={(e) => handleDatas("dateDepart", e.target.value)}
                 required
               />
             </div>
@@ -362,7 +341,7 @@ function PublishAdd({ datas, email }) {
                 className="shadow-md w-60 sm:w-72 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
                 type="text"
                 value={data.kilosDispo || ""}
-                onChange={(e) => hanldeDatas("kilosDispo", e)}
+                onChange={(e) => handleDatas("kilosDispo", e.target.value)}
                 required
                 pattern="\d*"
                 min={1}
@@ -380,7 +359,7 @@ function PublishAdd({ datas, email }) {
                 className="shadow-md w-60 sm:w-72 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
                 type="text"
                 value={data.prixKilo || ""}
-                onChange={(e) => hanldeDatas("prixKilo", e)}
+                onChange={(e) => handleDatas("prixKilo", e.target.value)}
                 min={1}
                 pattern="\d*"
                 required
@@ -415,7 +394,7 @@ function PublishAdd({ datas, email }) {
                 required
                 ref={discutable}
                 value={data.discutable || ""}
-                onChange={(e) => hanldeDatas("discutable", e)}
+                onChange={(e) => handleDatas("discutable", e.target.value)}
               >
                 <option value="oui">Oui</option>
                 <option value="non">Non</option>
@@ -427,7 +406,7 @@ function PublishAdd({ datas, email }) {
               </label>
               <textarea
                 value={data.description || ""}
-                onChange={(e) => hanldeDatas("description", e)}
+                onChange={(e) => handleDatas("description", e.target.value)}
                 className="shadow-md w-60 sm:w-72 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
                 type="text"
               />
@@ -439,7 +418,7 @@ function PublishAdd({ datas, email }) {
               <textarea
                 className="shadow-md w-60 sm:w-72 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
                 value={data.contraintes || ""}
-                onChange={(e) => hanldeDatas("contraintes", e)}
+                onChange={(e) => handleDatas("contraintes", e.target.value)}
                 type="text"
               />
             </div>
@@ -457,39 +436,57 @@ function PublishAdd({ datas, email }) {
           >
             <div className="flex flex-col items-center gap-5 rounded-lg mb-10 ">
               <div>
-                <p className="block mb-2 mt-5 text-sm font-medium text-gray-500 dark:text-gray-500">
-                  Pays (arrivé)
+                <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
+                  Pays (Arrivée)
                 </p>
-                <Selector
-                  data={countryData2}
-                  selected={country2}
-                  setSelected={setCountry2}
+                <CountrySelect
+                  showFlag={true}
+                  required
+                  countryid={paysArriveId}
+                  onChange={(e) => {
+                    setPaysArriveId(e.id);
+                    handleDatas("paysArrive", e.name);
+                    setPaysArriveNom(e.name);
+                    setSaveCountryArrive(...saveCountryArrive, e);
+                  }}
+                  placeHolder="Pays"
                 />
               </div>
-              {state2 && (
-                <div>
-                  <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
-                    Etat ou departement (arrivé)
-                  </p>
-                  <Selector
-                    data={stateData2}
-                    selected={state2}
-                    setSelected={setState2}
-                  />
-                </div>
-              )}
-              {city2 && (
-                <div>
-                  <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
-                    Ville (arrivé)
-                  </p>
-                  <Selector
-                    data={cityData2}
-                    selected={city2}
-                    setSelected={setCity2}
-                  />
-                </div>
-              )}
+
+              <div>
+                <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
+                  Etat ou departement (Arrivée)
+                </p>
+                <StateSelect
+                  required
+                  countryid={paysArriveId}
+                  onChange={(e) => {
+                    setEtatArriveId(e.id);
+                    handleDatas("etatArrive", e.name);
+                    setEtatArriveNom(e.name);
+                    setSaveStateArrive(...saveStateArrive, e);
+                  }}
+                  placeHolder="Etat ou departement"
+                />
+              </div>
+
+              <div>
+                <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
+                  Ville (Arrivée)
+                </p>
+                <CitySelect
+                  countryid={paysArriveId}
+                  style={{ width: "100%", height: "40px" }}
+                  stateid={etatArriveId}
+                  onChange={(e) => {
+                    setVilleArriveId(e.id);
+                    handleDatas("villeArrive", e.name);
+                    setVilleArriveNom(e.name);
+                    setSaveCityArrive(...saveCityArrive, e);
+                  }}
+                  placeHolder="ville"
+                />
+              </div>
               <div>
                 <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
                   Date (arrivé)
@@ -498,7 +495,7 @@ function PublishAdd({ datas, email }) {
                   className="shadow-md w-60 sm:w-72 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
                   type="date"
                   value={data.dateArrive || ""}
-                  onChange={(e) => hanldeDatas("dateArrive", e)}
+                  onChange={(e) => handleDatas("dateArrive", e.target.value)}
                   required
                 />
               </div>

@@ -45,7 +45,7 @@ function Home({datas,notificationData}) {
           <div className="bg-div-image">
             <UserIcon />
             <div className="nav-items">
-              <h1 style={{ color: "white", cursor: "pointer" }}>ROCOLIS</h1>
+              <h1 className='text-4xl font-medium' style={{ color: "white", cursor: "pointer" }}>ROCOLIS</h1>
               <nav>
                 <ul className="links-ul">
                   <li>

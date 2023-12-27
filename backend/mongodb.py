@@ -2,9 +2,16 @@ import json
 
 import bcrypt
 from bson import ObjectId, json_util
+from flask import jsonify, request
 from pymongo import MongoClient
 
+from emailSender import EmailSender
 
+
+db = client['users']
+collection = db['identity']
+collection2 = db['ads']
+collection3 = db['notifications']
 
 
 def check_email_exists(email):
@@ -23,10 +30,176 @@ def json_util_handler(obj):
 def update_document(doc_id, updated_data):
     try:
         object_id = ObjectId(doc_id)
-        updated_data.pop('_id', None)
-        # Update the document using update_one
-        result = collection2.update_one({'_id': object_id}, {'$set': updated_data})
+
+        # Ensure that the updated_data dictionary includes the original _id
+        updated_data['_id'] = object_id
+
+        # Replace the entire document with updated data
+        result = collection2.replace_one({'_id': object_id}, updated_data)
+
         if result.matched_count > 0:
+            return True
+        else:
+            return False
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return False
+
+
+listes = []
+
+
+def send_disponnible_ad(email, links):
+    links_html = " ".join([f"<a href='{link}'>{link}</a>" for link in links])
+    email = email
+    email_sender = EmailSender(
+
+        email_to=[email],
+        email_subject="Notification annonce disponnible",
+        email_message=f"""
+                                    <!DOCTYPE html>
+                <html lang="fr">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>ROCOLIS - Annonce disponible</title>
+                </head>
+                <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; padding: 20px;">
+                
+                    <div style="background-color: #6C63FF; color: #ffffff; padding: 10px; font-size: 24px; 
+                                margin: 20px 0; border-radius: 5px;"> 
+                        Bonjour <br/>Une annonce ou plusieurs annonces correspondant à vos notifications sont disponibles.
+                    </div>
+                  <h3>lien(s) : {links_html}</h3>
+                
+                </body>
+                </html>
+                
+                    """)
+    if email_sender.sendEmail():
+        return jsonify({"response": True})
+    else:
+        print("error")
+        return jsonify({"response": False})
+
+
+def set_notification_sent_true(_id, email):
+    global can_sent_notification
+    try:
+        _id = ObjectId(_id)
+        document = collection2.find_one({'_id': _id})
+        if document:
+            if 'notificationSent' not in document:
+                collection2.update_one(
+                    {'_id': _id},
+                    {'$set': {'notificationSent': [email]}}
+                )
+            else:
+                collection2.update_one(
+                    {'_id': _id},
+                    {'$addToSet': {'notificationSent': email}}
+                )
+            print(f"Notification sent updated for document with _id: {_id}")
+            can_sent_notification = True
+            return True
+        else:
+            print(f"Document not found: {_id}")
+            return False
+
+    except Exception as e:
+        print(f"Error in set_notification_sent_true: {e}")
+        return False
+
+
+def get_notification_with_email(email):
+    try:
+        global can_sent_notification
+        my_list = []
+        my_liste2 = []
+        cursor = collection3.find({"data": {"$ne": None}, "email": email}, {"data": 1, "_id": 0})
+        for document in cursor:
+            data_field = document.get('data')
+            if data_field is not None:
+                for k in data_field:
+                    my_liste2.append(k)
+        if len(my_liste2) > 0:
+            for j in my_liste2:
+                if check_city_in_database(j['villeDepart'], j['countryDepartName'], j['villeArrive'],
+                                          j['countryArriveName'], j['dateDepart'], j['dateArrivee'], email):
+                    pass
+                else:
+                    pass
+            if can_sent_notification:
+                if len(listes) > 0:
+                    send_disponnible_ad(email, listes)
+            can_sent_notification = False
+
+        return listes
+    except Exception as e:
+        print(f"Erreur dans get_notifications : {e}")
+        return []
+
+
+can_sent_notification = False
+
+
+def check_city_in_database(villeDepart,
+                           paysDepart,
+                           villeArrive,
+                           paysArrive,
+                           dateDepart="",
+                           dateArrive="",
+                           email=""):
+    try:
+        query = {
+            "villeDepart": villeDepart,
+            "paysDepart": paysDepart,
+            "paysArrive": paysArrive,
+            "villeArrive": villeArrive,
+        }
+        if dateDepart:
+            query["dateDepart"] = dateDepart
+        if dateArrive:
+            query["dateArrive"] = dateArrive
+
+        result = collection2.find_one(query)
+        can_sent_email = False
+        if result is not None:
+            link = f"http://localhost:5173/searched/{result['villeDepart'].lower()}/{result['villeArrive'].lower()}/{dateDepart}"
+            if result and ('notificationSent' not in result or email not in result["notificationSent"]):
+                if set_notification_sent_true(result["_id"], email):
+                    listes.append(link)
+                    pass
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
+
+        return result is not None
+    except Exception as e:
+        print(f"Erreur lors de la vérification de la ville dans la base de données : {e}")
+        return False
+
+
+def get_all_emails():
+    try:
+        cursor = collection.find({}, {"email": 1, "_id": 0})
+        emails = [document["email"] for document in cursor]
+        for j in emails:
+            print(get_notification_with_email(j))
+    except Exception as e:
+        print(f"Une erreur est survenue : {e}")
+
+
+def delete_document(doc_id):
+    try:
+        object_id = ObjectId(doc_id)
+        # Delete the document using delete_one
+        result = collection2.delete_one({'_id': object_id})
+
+        if result.deleted_count > 0:
             return True
         else:
             return False
@@ -293,3 +466,101 @@ def add_data(email, nom, prenom, telephone, mot_de_passe, statut):
         return True
     else:
         return False
+
+
+list_document_email = []
+
+
+def find_email_in_notifications(email):
+    list_document = []
+
+    try:
+        cursor = collection2.find({"notificationSent": {"$exists": True, "$in": [email]}})
+        results = list(cursor)
+
+        if results:
+            for result in results:
+                data = {
+                    "villeDepart": result.get("villeDepart", ""),
+                    "villeArrive": result.get("villeArrive", ""),
+                    "dateDepart": result.get("dateDepart", ""),
+                    "id": str(result.get('_id', '')),
+                    "paysDepart": result.get("paysDepart", ""),
+                    "paysArrive": result.get("paysArrive", "")
+                }
+                seen_list = result.get("seen")
+                if seen_list is None or email not in seen_list:
+                    list_document.append(data)
+            return list_document
+        else:
+            return []
+
+    except Exception as e:
+        print(f"Erreur lors de la recherche de l'e-mail dans la liste 'notificationSent' : {e}")
+        return []
+
+
+def add_token_to_document(email, token_value):
+    try:
+        document = collection.find_one({"email": email})
+        if document:
+            collection.update_one(
+                {"_id": document["_id"]},
+                {"$set": {"token": token_value}}
+            )
+            return True
+        else:
+            return False
+
+    except Exception as e:
+        print(f"Erreur lors de l'ajout du token au document : {e}")
+        return False
+
+
+def check_ik_for_email(email, provided_ik):
+    try:
+        document = collection.find_one({"email": email})
+        if document:
+            actual_ik = document.get("token", None)
+            if actual_ik is not None and actual_ik == provided_ik:
+                return True
+            else:
+                return False
+        else:
+            print(f"Aucun document trouvé pour l'e-mail : {email}")
+            return False
+
+    except Exception as e:
+        print(f"Erreur lors de la vérification de l'attribut 'ik' : {e}")
+        return False
+
+
+def add_email_to_seen(_id, email):
+    try:
+        _id = ObjectId(_id)
+        result = collection2.find_one({"_id": _id})
+        if result is not None:
+            seen_list = result.get("seen", [])
+            if email not in seen_list:
+                seen_list.append(email)
+                collection2.update_one(
+                    {'_id': _id},
+                    {'$set': {'seen': seen_list}}
+                )
+                print(f"Email ajouté à la liste 'seen' pour le document avec _id: {_id}")
+                return True
+            else:
+                print(f"L'email {email} est déjà dans la liste 'seen'")
+                return False
+        else:
+            collection2.update_one(
+                {'_id': _id},
+                {'$set': {'seen': [email]}}
+            )
+            print(f"Liste 'seen' créée et email ajouté pour le document avec _id: {_id}")
+            return True
+    except Exception as e:
+        print(f"Erreur dans add_email_to_seen : {e}")
+        return False
+
+

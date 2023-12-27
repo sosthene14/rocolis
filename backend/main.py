@@ -11,7 +11,10 @@ import mongodb
 import jwt_
 
 app = Flask(__name__)
+CORS(app)
 
+db = client['users']
+collection = db['identity']
 
 
 def generate_validation_code():
@@ -81,7 +84,22 @@ def add_ads():
 def handle_jwt():
     data = request.get_json()
     mytoken = jwt_.encode_(data["email"])
-    return jsonify({"token": mytoken})
+    print(mytoken)
+    if mongodb.add_token_to_document(data["email"], mytoken[1]):
+        return jsonify({"token": mytoken[0]})
+    else:
+        return jsonify({"erreur": "erreur"})
+
+
+@app.route('/api/check-ik', methods=['POST'])
+def check_ik():
+    data = request.get_json()
+    email = data["email"]
+    ik = data["ik"]
+    if mongodb.check_ik_for_email(email, ik):
+        return jsonify({"response": True})
+    else:
+        return jsonify({"response": False})
 
 
 @app.route('/api/check-signed', methods=['POST'])
@@ -261,8 +279,7 @@ def send_confirmation_data_received(email_to_send=None):
 
 
 def send_message_to_admin(_id):
-    admin1 = "sosthenemounsambote14@gmail.com"
-    admin4 = "rostelherdyyoulou@gmail.com"
+
 
     email_sender = EmailSender(
 
@@ -291,7 +308,6 @@ def send_message_to_admin(_id):
 
 @app.route('/api/send-confirmation-to-user', methods=['POST'])
 def send_message_confirmation_to_user():
-    print(request.get_json())
     email = request.get_json()["email"]
     link = request.get_json()["link"]
     email_sender = EmailSender(
@@ -384,8 +400,18 @@ def get_user_id():
 @app.route('/api/update-doc-datas', methods=['POST'])
 def update_ad():
     data = request.get_json()
-    update = mongodb.update_document(data["_id"], data)
+    update = mongodb.update_document(data["_id"], data['data'])
 
+    if update:
+        return jsonify({"response": True})
+    else:
+        return jsonify({"response": False})
+
+
+@app.route('/api/delete-doc-datas', methods=['POST'])
+def delete_ad():
+    data = request.get_json()
+    update = mongodb.delete_document(data["_id"])
     if update:
         return jsonify({"response": True})
     else:
@@ -446,5 +472,41 @@ def update_is_valided():
         return jsonify({"response": False})
 
 
+@app.route("/api/check-notifications", methods=['GET'])
+def checking_noti():
+    mongodb.get_all_emails()
+    data = {'message': 'notifications initalisées'}
+    return jsonify(data)
+
+
+@app.route('/api/get-notifications-with-email', methods=['POST'])
+def send_noti_to_client():
+    email = request.get_json()['email']
+    data = {'data': mongodb.find_email_in_notifications(email)}
+    return jsonify(data)
+
+
+@app.route('/api/add-email-to-seen', methods=['POST'])
+def add_email_to_seen():
+    email = request.get_json()['email']
+    _id = request.get_json()["_id"]
+    if email != "" and _id != "":
+        result = mongodb.add_email_to_seen(_id, email)
+        if result:
+            return jsonify({"response": True})
+        else:
+            return jsonify({"response": False})
+
+
+@app.route('/api/email-exist', methods=['POST'])
+def check_exist_email():
+    email = request.get_json()['email']
+    result = mongodb.check_email_exists(email)
+    if result:
+        return jsonify({"response": True})
+    else:
+        return jsonify({"response": False})
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

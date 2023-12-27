@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Selector from "../publishAd/Selector";
 import { Country, State, City } from "country-state-city";
 import _ from "lodash";
+import remplacerEspacesParTirets from "../../components/removeSpace/removeSpace";
 const EditNotification = ({
   editNotifications,
   id,
@@ -19,6 +20,7 @@ const EditNotification = ({
   indexOfArriveState,
   indexOfDepartCity,
   indexOfArriveCity,
+  annulateModification,
 }) => {
   const [villeDepartValue, setVilleDepartValue] = useState(villeDepart);
   const [villeArriveValue, setVilleArriveValue] = useState(villeArrive);
@@ -148,14 +150,15 @@ const EditNotification = ({
   const handleSubmit = (e) => {
     e.preventDefault();
     editNotifications(
-      removeAccents(villeDepartValue),
-      removeAccents(villeArriveValue),
+      removeAccents(remplacerEspacesParTirets(villeDepartValue)),
+      removeAccents(remplacerEspacesParTirets(villeArriveValue)),
+     
       dateDepartValue,
       dateArriveeValue,
       indexOfDepartCountry,
       indexOfArriveCountry,
-      countryDepartNameValue,
-      countryArriveNameValue,
+      remplacerEspacesParTirets(villeDepartValue),
+      remplacerEspacesParTirets(villeArriveValue),
       indexOfDepartStateValue,
       indexOfArriveStateValue,
       indexOfDepartCityValue,
@@ -295,7 +298,8 @@ const EditNotification = ({
                 />
               </div>
             )}
-            <div>
+            {/*
+              <div>
               <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
                 Date d'arrivée (facultative)
               </p>
@@ -305,14 +309,25 @@ const EditNotification = ({
                 value={dateArriveeValue}
                 onChange={(e) => setDateArriveeValue(e.target.value)}
               />
+            </div>*/}
+            <div className="flex gap-5">
+              <button
+                type="submit"
+                style={{ backgroundColor: "#e863ff" }}
+                className="text-white  font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 "
+              >
+                {"Mettre à jour"}
+              </button>
+              <button
+              onClick={() => {
+                annulateModification(id);
+              }}
+                style={{ backgroundColor: "#6C63FF" }}
+                className="text-white  font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 "
+              >
+                {"Annuler"}
+              </button>
             </div>
-            <button
-              type="submit"
-              style={{ backgroundColor: "#e863ff" }}
-              className="text-white mb-5 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 "
-            >
-              {"Mettre à jour"}
-            </button>
           </div>
         </div>
       </form>

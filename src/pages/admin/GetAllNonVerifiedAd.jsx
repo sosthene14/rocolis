@@ -11,7 +11,7 @@ function GetAllNonVerifiedAd({ ads,email }) {
       },
       body: JSON.stringify({ document_id: _id }),
     };
-    fetch("http://127.0.0.1:5000/api/update-is-valided", requestOptions)
+    fetch("http://192.168.1.10:5000/api/update-is-valided", requestOptions)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -32,7 +32,7 @@ function GetAllNonVerifiedAd({ ads,email }) {
       });
   }
   const sendPublicationSuccess = (index) => {
-      fetch("http://127.0.0.1:5000/api/send-confirmation-to-user", {
+      fetch("http://192.168.1.10:5000/api/send-confirmation-to-user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

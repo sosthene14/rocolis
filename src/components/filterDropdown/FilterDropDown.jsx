@@ -13,6 +13,7 @@ const FilterDropdown = ({ data }) => {
   const sortByDateRecentToOld = (a, b) => new Date(b.dateDepart) - new Date(a.dateDepart);
   const sortByDateOldToRecent = (a, b) => new Date(a.dateDepart) - new Date(b.dateDepart);
   const sortByKilosAvailable = (a, b) => b.kilosDispo - a.kilosDispo;
+  const sortByKilosAvailable2 = (a, b) => a.kilosDispo - b.kilosDispo;
 
   const sortData = (filter) => {
     switch (filter) {
@@ -26,6 +27,8 @@ const FilterDropdown = ({ data }) => {
         return data.sort(sortByDateOldToRecent);
       case 'kilosAvailable':
         return data.sort(sortByKilosAvailable);
+      case 'kilosAvailable2':
+        return data.sort(sortByKilosAvailable2);
       default:
         return data;
     }
@@ -37,12 +40,13 @@ const FilterDropdown = ({ data }) => {
     <>
       <div className='filter-div'>
         <label htmlFor="filterDropdown"></label>
-        <select id="filterDropdown" value={selectedFilter} onChange={handleFilterChange}>
-          <option value="priceHighToLow">Prix (du plus haut au plus bas)</option>
-          <option value="priceLowToHigh">Prix (du plus bas au plus haut)</option>
-          <option value="dateRecentToOld">Date (plus récente à plus ancienne)</option>
-          <option value="dateOldToRecent">Date (plus ancienne à plus récente )</option>
-          <option value="kilosAvailable">Nombre de kilos disponibles</option>
+        <select id="filterDropdown" className="shadow-md w-96 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none" value={selectedFilter} onChange={handleFilterChange}>
+          <option  value="priceHighToLow">Prix kilo (du plus haut au plus bas)</option>
+          <option value="priceLowToHigh">Prix kilo (du plus bas au plus haut)</option>
+          <option value="dateRecentToOld">Date voyage (plus récente à plus ancienne)</option>
+          <option value="dateOldToRecent">Date voyage (plus ancienne à plus récente )</option>
+          <option value="kilosAvailable2">Nombre de kilos (plus bas au plus haut)</option>
+          <option value="kilosAvailable">Nombre de kilos (plus haut au plus bas)</option>
         </select>
       </div>
       <Annonces data={sortedData} />

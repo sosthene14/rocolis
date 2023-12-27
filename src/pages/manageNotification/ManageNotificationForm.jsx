@@ -4,6 +4,7 @@ import "./ManageNotification.css";
 import { useState, useEffect } from "react";
 import Selector from "../publishAd/Selector";
 import { Country, State, City } from "country-state-city";
+import remplacerEspacesParTirets from "../../components/removeSpace/removeSpace";
 
 const ManageNotificationForm = ({ addNotifications }) => {
   const [villeDepartValue, setVilleDepartValue] = useState("");
@@ -94,14 +95,14 @@ const ManageNotificationForm = ({ addNotifications }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     addNotifications(
-      removeAccents(villeDepartValue),
-      removeAccents(villeArriveValue),
+      removeAccents(remplacerEspacesParTirets(villeDepartValue)),
+      removeAccents(remplacerEspacesParTirets(villeArriveValue)),
       dateDepartValue,
       dateArriveeValue,
       indexOfDepartCountryValue,
       indexOfArriveCountryValue,
-      countryDepartNameValue,
-      countryArriveNameValue,
+      remplacerEspacesParTirets(countryDepartNameValue),
+      remplacerEspacesParTirets(countryArriveNameValue),
       indexOfDepartStateValue,
       indexOfArriveStateValue,
       indexOfDepartCityValue,
@@ -238,7 +239,8 @@ const ManageNotificationForm = ({ addNotifications }) => {
                 />
               </div>
             )}
-            <div>
+            {/*
+                  <div>
               <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
                 Date d'arrivée (facultative)
               </p>
@@ -248,11 +250,13 @@ const ManageNotificationForm = ({ addNotifications }) => {
                 value={dateArriveeValue}
                 onChange={(e) => setDateArriveeValue(e.target.value)}
               />
-            </div>
+            </div> */
+            }
+       
             <button
               type="submit"
               style={{ backgroundColor: "#6C63FF" }}
-              className="text-white mb-5 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 "
+              className="text-white  font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 "
             >
               {"Ajouter"}
             </button>

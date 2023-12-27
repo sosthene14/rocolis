@@ -34,7 +34,7 @@
     justify-content: center;
 }
 .check-button {
-    border-radius: 20px;
+    border-radius: 10px;
     background: #6C63FF;
     cursor: pointer;
     border: none;

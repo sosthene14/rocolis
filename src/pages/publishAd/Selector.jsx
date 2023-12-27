@@ -62,7 +62,7 @@ function Selector({ data, selected, setSelected }) {
                   key={generateRandomString(10)}
                     className={({ active }) =>
                       `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                        active ? "z-10 bg-teal-600 text-white " : "text-gray-500"
+                        active ? "z-10 bg-violet-hover text-white " : "text-gray-500"
                       }`
                     }
                     value={person || ""}
@@ -79,7 +79,7 @@ function Selector({ data, selected, setSelected }) {
                         {selected ? (
                           <span
                             className={`absolute inset-y-0 left-0 flex pl-3 ${
-                              active ? "text-white z-10" : "text-teal-600"
+                              active ? "text-white z-10" : "bg-violet-active text-white"
                             }`}
                           >
                             <CheckIcon className="h-5 w-5" aria-hidden="true" />

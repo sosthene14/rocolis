@@ -11,5 +11,5 @@ def generate_unique():
 
 def encode_(email):
     generated_id = generate_unique()
-    token = jwt.encode({"email": email, "logged": True}, key=generated_id)
-    return token
+    token = jwt.encode({"email": email, "logged": True, "_ik": generated_id}, key=generated_id)
+    return [token, generated_id]

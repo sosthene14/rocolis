@@ -33,6 +33,9 @@ const TravelerSearchFormDepart = ({
       setEmail(decodedToken.email);
     }
   }, []);
+  function removeAccents(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
   useEffect(() => {
     if (notificationData?.length > 0) {
       setOtherSuggestion(notificationData);
@@ -40,7 +43,7 @@ const TravelerSearchFormDepart = ({
   }, [email, notificationData]);
 
   const handleSearchs = (e) => {
-    const term = e.target.value;
+    const term = removeAccents(e.target.value.trim());
     setSearchTerm(term);
     const uniqueDeparts = new Set();
 
@@ -51,7 +54,6 @@ const TravelerSearchFormDepart = ({
       const filteredResults = data.filter((element) =>
         element.villeDepart.toLowerCase().includes(term.toLowerCase())
       );
-console.log(otherSuggestion)
       const filteredResults2 = otherSuggestion.filter((element) =>
         element.villeDepart.toLowerCase().includes(term.toLowerCase())
       );
@@ -116,8 +118,9 @@ console.log(otherSuggestion)
                 placeholder="Ville de départ"
                 ref={input_depart}
                 className={
-                  onErrorFieldDepartDest ? "villeDepart-input-error" : "villeDepart-input"
+                  onErrorFieldDepartDest ? "w-40 text-sm rounded-lg bg-rose-100 text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none" : "w-40 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
                 }
+                
                 type="text"
                 value={villeDepart}
                 onChange={(e) => {
