@@ -130,3 +130,23 @@ ul li:hover {
   color: #6c63ff;
   transition: all 0.3s;
 }
+.buttonStyle {
+  background-color: #F6F6F6;
+  color: black;
+  border: none;
+  outline: none;
+  border-color: none;
+}
+
+.buttonStyle:hover {
+  background-color: #F6F6F6;
+  color: black;
+  border: none;
+  outline: none;
+  border-color: none;
+}
+.item:focus {
+  outline: none; /* Pour enlever la bordure de focus */
+  border: none; /* Pour enlever toute bordure existante */
+}
+

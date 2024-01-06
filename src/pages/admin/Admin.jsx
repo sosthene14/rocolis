@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./Admin.css";
 import AdminHandling from "./AdminHandling";
+import bcrypt from "bcryptjs";
 
 // Fonction pour hasher un mot de passe côté client
 
@@ -10,14 +11,35 @@ const Admin = ({ verifiedAds, email }) => {
   const handleCodeChange = (e) => {
     setCode(e.target.value);
   };
+  const checkPwd = () => {
+    const hashedPwd = bcrypt.hashSync(code, 10);
+
+    fetch(`http://192.168.1.11:5000/api/check-admin-pwd`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ pwd: hashedPwd }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("La requête POST a échoué.");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        if (data.result === true) {
+          setIsCodeCorrect(true);
+        }
+      })
+      .catch((error) => {
+        console.error("Erreur:", error);
+      });
+  };
 
   const handleAccess = () => {
-    const correctCode = import.meta.env.VITE_API_KEY; // Remplacez par le code correct souhaité
-    if (code === correctCode) {
-      setIsCodeCorrect(true);
-    } else {
-      setIsCodeCorrect(false);
-    }
+    checkPwd();
   };
 
   return (

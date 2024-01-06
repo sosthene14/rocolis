@@ -6,6 +6,7 @@ import { useRef } from "react";
 import Cookies from "universal-cookie";
 import { decodeToken } from "react-jwt";
 import formatDate from "../formatDate/formatDate";
+import { FaPlane } from "react-icons/fa";
 
 const SearchForm = ({ datas }) => {
   const input_depart = useRef();
@@ -31,34 +32,36 @@ const SearchForm = ({ datas }) => {
   }, [email]);
   const getNotifications = async () => {
     try {
-      const response = await fetch("http://192.168.1.10:5000/api/get-notifications", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-        }),
-      });
-  
+      const response = await fetch(
+        "http://192.168.1.11:5000/api/get-notifications",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+          }),
+        }
+      );
+
       if (!response.ok) {
         console.error(`Error: ${response.status}`);
         // Handle the error if needed
         return;
       }
-  
+
       const data = await response.json();
-  
+
       if (data.response !== false) {
         setNotificationData(data.data);
       }
-  
     } catch (error) {
       console.error("Error:", error);
       // Handle the error if needed
     }
   };
-  
+
   const formSubmit = (e) => {
     let inputDepart = input_depart.current.value;
     let inputDestination = input_destination.current.value;
@@ -102,45 +105,49 @@ const SearchForm = ({ datas }) => {
 
   return (
     <div
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        alignItems: "center",
-        justifyContent: "center",
-        marginTop: "100px",
-        marginBottom: "100px",
-        gap: "50px",
-      }}
+      className="bg-white  rounded-2xl -mt-20 w-[320px] md:w-[750px] lg:w-[1000px]  m-auto"
+      style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
     >
-      <TravelerSearchFormDepart
-        notificationData={notificationData}
-        datas={datas}
-        removeError={removeErrorDepart}
-        input_depart={input_depart}
-        onErrorFieldDepartDest={onErrorFieldDepartDest}
-      />
-      <TravelerSearchFormDestination
-        notificationData={notificationData}
-        datas={datas}
-        removeErrorDest={removeErrorDest}
-        input_destination={input_destination}
-        onErrorFieldDest={onErrorFieldDest}
-      />
-      <DateDepart
-        removeErrorDate={removeErrorDate}
-        date_depart={date_depart}
-        onErrorFieldDateDprt={onErrorFieldDateDprt}
-      />
+      <div className="text-neutral-900 justify-center text-base font-semibold font-['Montserrat'] flex gap-2 p-5 items-center ">
+        <div className="hidden sm:flex">
+          <FaPlane />
+        </div>
 
-      <div>
-        <button
-          className="search-btn"
-          onClick={() => {
-            formSubmit();
-          }}
-        >
-          Rechercher
-        </button>
+        <p className="text-center">
+          Trouver des vendeurs de kilos plus facilement
+        </p>
+      </div>
+      <div className="flex justify-center gap-8 flex-wrap p-5">
+        <TravelerSearchFormDepart
+          notificationData={notificationData}
+          datas={datas}
+          removeError={removeErrorDepart}
+          input_depart={input_depart}
+          onErrorFieldDepartDest={onErrorFieldDepartDest}
+        />
+        <TravelerSearchFormDestination
+          notificationData={notificationData}
+          datas={datas}
+          removeErrorDest={removeErrorDest}
+          input_destination={input_destination}
+          onErrorFieldDest={onErrorFieldDest}
+        />
+        <DateDepart
+          removeErrorDate={removeErrorDate}
+          date_depart={date_depart}
+          onErrorFieldDateDprt={onErrorFieldDateDprt}
+        />
+
+        <div>
+          <button
+            className="w-[100px] z-0 h-12 bg-sky-600 rounded-lg flex-col justify-center items-center gap-2 inline-flex text-center text-sm font-semibold relative px-5 py-3 text-white drop-shadow hover:bg-sky-700 transition-duration: 75ms"
+            onClick={() => {
+              formSubmit();
+            }}
+          >
+            Rechercher
+          </button>
+        </div>
       </div>
     </div>
   );

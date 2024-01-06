@@ -4,6 +4,7 @@ import useGeoLocation from "react-ipgeolocation";
 import "./searchForm.css";
 import Cookies from "universal-cookie";
 import { useJwt, decodeToken, isExpired } from "react-jwt";
+import { FaChevronDown } from "react-icons/fa";
 
 const TravelerSearchFormDepart = ({
   input_depart,
@@ -25,6 +26,7 @@ const TravelerSearchFormDepart = ({
 
   useEffect(() => {
     setData(datas);
+    console.log(datas);
   }, [datas]);
 
   useEffect(() => {
@@ -52,21 +54,24 @@ const TravelerSearchFormDepart = ({
       setSearchResults([]);
     } else {
       const filteredResults = data.filter((element) =>
-        element.villeDepart.toLowerCase().includes(term.toLowerCase())
+        removeAccents(element.villeDepart.toLowerCase()).includes(term.toLowerCase())
       );
       const filteredResults2 = otherSuggestion.filter((element) =>
-        element.villeDepart.toLowerCase().includes(term.toLowerCase())
+        removeAccents(element.villeDepart.toLowerCase()).includes(term.toLowerCase())
       );
 
       filteredResults.forEach((element) => {
-        uniqueDeparts.add(element.villeDepart.toLowerCase());
+        removeAccents(uniqueDeparts.add(element.villeDepart.toLowerCase()));
       });
       filteredResults2.forEach((element) => {
-        uniqueDeparts.add(element.villeDepart.toLowerCase());
+        removeAccents(uniqueDeparts.add(element.villeDepart.toLowerCase()));
       });
-      if (data.length > 0) {
+      if (data.length > 0 || otherSuggestion.length > 0) {
         setSearchResults(uniqueDeparts);
         setCanViewSuggestion(true);
+      }
+      else {
+        setDepartNotAvailable(true);
       }
 
       if (
@@ -81,11 +86,42 @@ const TravelerSearchFormDepart = ({
     }
   };
 
+  const handleSearchWithoutTap = () => {
+    const uniqueDeparts = new Set();
+    const filteredResults = data.filter((element) =>
+      element.villeDepart.toLowerCase()
+    );
+    const filteredResults2 = otherSuggestion.filter((element) =>
+      element.villeDepart.toLowerCase()
+    );
+    filteredResults.forEach((element) => {
+      uniqueDeparts.add(element.villeDepart.toLowerCase());
+    });
+    filteredResults2.forEach((element) => {
+      uniqueDeparts.add(element.villeDepart.toLowerCase());
+    });
+    setSearchResults(uniqueDeparts);
+  };
+
+  useEffect(() => {
+    handleSearchWithoutTap();
+  }, [data, otherSuggestion]);
+  const chevron = useRef(null);
+
+  const openSuggestionView = () => {
+    handleSearchWithoutTap();
+    setCanViewSuggestion(true);
+  };
+
+  const closeSuggestionView = () => {
+    setCanViewSuggestion(false);
+  };
+
   function useOutsideAlerter(ref) {
     useEffect(() => {
       function handleClickOutside(event) {
         if (canViewSuggestion) {
-          if (ref.current && !ref.current.contains(event.target)) {
+          if (ref.current && !ref.current.contains(event.target) && event.target.id !== "chevron") {
             setCanViewSuggestion(false);
           }
         }
@@ -98,11 +134,12 @@ const TravelerSearchFormDepart = ({
     }, [ref, canViewSuggestion]);
   }
 
-  useOutsideAlerter(depart_suggestion);
+  useOutsideAlerter(depart_suggestion, chevron);
 
   const handleAddDepart = (e, element_clicked) => {
     localStorage.setItem("favoriteDep", element_clicked);
     setDepart(localStorage.getItem("favoriteDep"));
+    setCanViewSuggestion(false);
   };
 
   const location = useGeoLocation();
@@ -113,28 +150,55 @@ const TravelerSearchFormDepart = ({
         <div>
           <label className="label-search">
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <input
-                id="input-villeDepart"
-                placeholder="Ville de départ"
-                ref={input_depart}
-                className={
-                  onErrorFieldDepartDest ? "w-40 text-sm rounded-lg bg-rose-100 text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none" : "w-40 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
-                }
-                
-                type="text"
-                value={villeDepart}
-                onChange={(e) => {
-                  setDepart(e.target.value);
-                  handleSearchs(e);
-                }}
-                onClick={removeError}
-                required
-              />
+              <div className="relative flex items-center">
+                <input
+                  ref={input_depart}
+                  className={
+                    onErrorFieldDepartDest
+                      ? "border-2  transition-all transition-duration: 75ms border-red-400 outline-none p-3 rounded-md text-zinc-900 text-opacity-60 text-sm font-normal font-['Montserrat']"
+                      : "border-2 transition-all transition-duration: 75ms outline-none border-gray-300 p-3 rounded-md text-zinc-900 text-opacity-60 text-sm font-normal font-['Montserrat']"
+                  }
+                  type="text"
+                  value={villeDepart}
+                  onChange={(e) => {
+                    setDepart(e.target.value);
+                    handleSearchs(e);
+                  }}
+                  onClick={removeError}
+                  required
+                />
+                <label
+                  style={{ color: "black", fontSize: "14px" }}
+                  htmlFor="floating_outlined"
+                  className="absolute text-neutral-900 text-sm dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-1 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
+                >
+                  Ville de départ
+                </label>
+                <FaChevronDown
+                id="chevron"
+                  refX={chevron}
+                  refY={chevron}
+                  onClick={
+                    canViewSuggestion ? closeSuggestionView : openSuggestionView
+                  }
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    width: "15px",
+                    height: "15px",
+                    cursor: "pointer",
+                  }}
+                />
+              </div>
               <div
                 ref={depart_suggestion}
-                id={canViewSuggestion ? "villeDepart-list" : "villeDepart-list-none"}
+                id={
+                  canViewSuggestion
+                    ? "villeDepart-list"
+                    : "villeDepart-list-none"
+                }
               >
-                {searchResults.size > 0 && searchTerm.trim() !== "" && (
+                {searchResults.size > 0 && (
                   <ul>
                     {Array.from(searchResults).map((result) => (
                       <li

@@ -11,6 +11,8 @@ import Cookies from "universal-cookie";
 import SearchForm from "../searchForm/SearchForm";
 import formatDate from "../formatDate/formatDate";
 import { ObjectId } from "bson";
+import handleJWT from "../handleJWT/JWT";
+import countryList from "react-select-country-list"; 
 const DetailedAnnonce = ({ datas, email }) => {
   const [toogleNotifications, setToogleNotification] = useState(true);
   const [seeSpiner, setSeeSpiner] = useState(true);
@@ -26,6 +28,7 @@ const DetailedAnnonce = ({ datas, email }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [emailPublishedBy, setEmailPublishedBy] = useState("");
   const [userName, setUserName] = useState("");
+  const [userMail, jwtToken] = handleJWT();
   useEffect(() => {
     if (email != "") {
       getUserId(email);
@@ -33,8 +36,8 @@ const DetailedAnnonce = ({ datas, email }) => {
     }
   }, [email]);
   useEffect(() => {
-    if (emailPublishedBy != "") {
-      getSellerPhone(emailPublishedBy);
+    if (emailPublishedBy != "" && jwtToken != "") {
+      getSellerPhone(emailPublishedBy, jwtToken);
     }
   }, [emailPublishedBy]);
   useEffect(() => {
@@ -42,11 +45,13 @@ const DetailedAnnonce = ({ datas, email }) => {
       updateView(userId, documentId["$oid"]);
     }
   }, [documentId, userId]);
+  
   function getUserId(email) {
-    fetch("http://192.168.1.10:5000/api/get-user-id", {
+    fetch("http://192.168.1.11:5000/api/get-user-id", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${jwtToken}`,
       },
       body: JSON.stringify({ email: email }),
     }).then((response) => {
@@ -57,26 +62,30 @@ const DetailedAnnonce = ({ datas, email }) => {
       }
     });
   }
-  function getSellerPhone(email) {
-    fetch("http://192.168.1.10:5000/api/get-stats", {
+  function getSellerPhone(email, jwtToken) {
+
+    fetch("http://192.168.1.11:5000/api/get-phone-number", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${jwtToken}`,
       },
       body: JSON.stringify({ email: email }),
     }).then((response) => {
       if (response.ok) {
         response.json().then((data) => {
+          
           setPhoneNumber("+" + data["telephone"]);
         });
       }
     });
   }
   function getUserName(email) {
-    fetch("http://192.168.1.10:5000/api/get-stats", {
+    fetch("http://192.168.1.11:5000/api/get-stats", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${jwtToken}`,
       },
       body: JSON.stringify({ email: email }),
     }).then((response) => {
@@ -125,7 +134,7 @@ const DetailedAnnonce = ({ datas, email }) => {
   }
 
   function getPublishedBy(email) {
-    fetch("http://192.168.1.10:5000/api/get-user-name", {
+    fetch("http://192.168.1.11:5000/api/get-user-name", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -141,7 +150,7 @@ const DetailedAnnonce = ({ datas, email }) => {
   }
 
   function updateView(userId, documentId) {
-    fetch("http://192.168.1.10:5000/api/add-who-seen", {
+    fetch("http://192.168.1.11:5000/api/add-who-seen", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -213,7 +222,7 @@ const DetailedAnnonce = ({ datas, email }) => {
                   Ville de départ :{" "}
                   <span>
                     {voyageur.villeDepart.toLocaleLowerCase()} (
-                    {voyageur.paysDepart})
+                    {countryList().getLabel(voyageur.paysDepart)})
                   </span>
                 </span>
                 <span>
@@ -229,7 +238,7 @@ const DetailedAnnonce = ({ datas, email }) => {
                   <span>
                     {" "}
                     {voyageur.villeArrive.toLocaleLowerCase()} (
-                    {voyageur.paysArrive})
+                    {countryList().getLabel(voyageur.paysArrive)})
                   </span>
                 </span>
                 <span>

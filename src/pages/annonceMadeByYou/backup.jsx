@@ -241,7 +241,7 @@ const AnnonceMadeByYou = ({ data }) => {
   }
 
   const editAds = (index) => {
-    fetch(`http://192.168.1.10:5000/api/update-doc-datas`, {
+    fetch(`http://192.168.1.11:5000/api/update-doc-datas`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -271,7 +271,7 @@ const AnnonceMadeByYou = ({ data }) => {
   };
 
   const removeAds = (index) => {
-    fetch(`http://192.168.1.10:5000/api/delete-ads`, {
+    fetch(`http://192.168.1.11:5000/api/delete-ads`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

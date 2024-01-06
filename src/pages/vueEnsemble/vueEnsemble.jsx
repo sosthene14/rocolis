@@ -8,7 +8,8 @@ import _ from "lodash";
 import { ThreeCircles } from "react-loader-spinner";
 import CodeVerificationMessage from "../../components/simpleCodeVerification/SimpleCode";
 import { isValidPhoneNumber } from "react-phone-number-input";
-
+import handleJWT from "../../components/handleJWT/JWT";
+import bcrypt from "bcryptjs-react";
 const VueEnsemble = ({ datas, email }) => {
   const [error, setError] = useState(false);
   const [data, setData] = useState([]);
@@ -66,23 +67,24 @@ const VueEnsemble = ({ datas, email }) => {
     });
     setViewNumber(sum);
   }
-
+  const [password, setPassword] = useState("");
   const handleChildData = (data) => {
     setCanModify(data);
     if (canModify) {
       setSeeModifyOption(false);
     }
   };
-
+  const [userEmail, jwtToken] = handleJWT();
   const getPersonnalData = async (email) => {
     try {
-      const response = await fetch("http://192.168.1.10:5000/api/get-stats", {
+      const response = await fetch("http://192.168.1.11:5000/api/get-stats", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
         },
         body: JSON.stringify({
-          email: email,
+          email: userEmail,
         }),
       });
 
@@ -99,10 +101,29 @@ const VueEnsemble = ({ datas, email }) => {
       console.error("Erreur lors de la requête POST:", error.message);
     }
   };
-
+  useEffect(() => {
+    setPassword(data["mot_de_passe"]);
+  }, [datas]);
+  function getCrypto() {
+    try {
+      return window.crypto;
+    } catch {
+      return crypto;
+    }
+  }
   const handleModifications = () => {
     if (modify.current.innerText === "Modifier") {
       setSeeModifyOption(!seeModifyOption);
+    }
+  };
+
+  useEffect(() => {
+    handlePassword();
+  }, [password]);
+  const handlePassword = () => {
+    if (password != undefined) {
+      console.log(password);
+      setData({ ...data, mot_de_passe: bcrypt.hashSync(password, 10) });
     }
   };
   const handleChange = (e, element) => {
@@ -113,11 +134,12 @@ const VueEnsemble = ({ datas, email }) => {
     setSeeSpiner(true);
     try {
       const response = await fetch(
-        "http://192.168.1.10:5000/api/update-personnal-data",
+        `http://192.168.1.11:5000/api/update-personnal-data/${userEmail}`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
           },
           body: JSON.stringify(data),
         }
@@ -131,6 +153,7 @@ const VueEnsemble = ({ datas, email }) => {
     } catch (error) {
       setSeeSpiner(false);
       alert("Une erreur est survenue");
+      window.location.reload();
       console.error("Erreur lors de la requête POST:", error.message);
     }
   };
@@ -231,12 +254,12 @@ const VueEnsemble = ({ datas, email }) => {
               <label className="vue-ensemble-p">Password</label>
               <input
                 type="text"
-                value={data.mot_de_passe || ""}
+                value={password || ""}
                 pattern=".{4,}"
                 required
                 title="Le mot de passe doit contenir au moins 4 caractères"
                 onChange={(e) => {
-                  handleChange(e, "mot_de_passe");
+                  setPassword(e.target.value);
                 }}
                 disabled={canModify ? false : true}
                 className="w-60 sm:w-72 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"

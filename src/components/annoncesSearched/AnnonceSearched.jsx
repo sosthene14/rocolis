@@ -9,7 +9,7 @@ import NavBar from "../navBar/NavBar";
 import { FakeFooter } from "../fakeFooter/FakeFooter";
 import SearchForm from "../searchForm/SearchForm";
 
-const AnnonceSearched = ({ datas,notificationData }) => {
+const AnnonceSearched = ({ datas, notificationData }) => {
   const [avaibleRealDatas, setAvaibleRealDatas] = useState(false);
   const [avaibleSimilarDatas, setAvaibleSimilarDatas] = useState(false);
   const [seeSpiner, setSeeSpiner] = useState(true);
@@ -19,7 +19,6 @@ const AnnonceSearched = ({ datas,notificationData }) => {
   const [isError, setIsError] = useState(false); // Added loading state
 
   const { villeDepart, villeArrive, departureDate } = useParams();
-
 
   useEffect(() => {
     setSeeSpiner(true);
@@ -34,19 +33,21 @@ const AnnonceSearched = ({ datas,notificationData }) => {
 
   useEffect(() => {
     go();
+    console.log(data);
   }, [villeArrive, data]);
 
   function removeAccents(str) {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   }
- 
+
   function go() {
     let results = _.filter(data, (voyage) => {
       return (
         removeAccents(voyage.villeArrive.toLocaleLowerCase()) ===
           removeAccents(villeArrive.toLocaleLowerCase()) &&
         voyage.dateDepart === departureDate &&
-        removeAccents(voyage.villeDepart.toLocaleLowerCase()) === removeAccents(villeDepart.toLocaleLowerCase())
+        removeAccents(voyage.villeDepart.toLocaleLowerCase()) ===
+          removeAccents(villeDepart.toLocaleLowerCase())
       );
     });
     setSeeSpiner(true);
@@ -64,7 +65,8 @@ const AnnonceSearched = ({ datas,notificationData }) => {
         removeAccents(voyage.villeArrive.toLocaleLowerCase()) ===
           removeAccents(villeArrive.toLocaleLowerCase()) &&
         (departureDate === undefined || voyage.dateDepart !== departureDate) &&
-        removeAccents(voyage.villeDepart.toLocaleLowerCase()) === removeAccents(villeDepart.toLocaleLowerCase())
+        removeAccents(voyage.villeDepart.toLocaleLowerCase()) ===
+          removeAccents(villeDepart.toLocaleLowerCase())
       );
     });
 
@@ -128,9 +130,7 @@ const AnnonceSearched = ({ datas,notificationData }) => {
                 alignItems: "center",
               }}
             >
-              <h3>
-                Aucune donnée n'a pu être trouvé
-              </h3>
+              <h3>Aucune donnée n'a pu être trouvé</h3>
               <img src={images.noData} style={{ width: "220px" }} />
             </div>
           )}

@@ -3,6 +3,8 @@ import "./Annonces.css";
 import images from '../../assets/images/images';
 import { useState } from 'react';
 import formatDate from '../formatDate/formatDate';
+import countryList from "react-select-country-list";
+
 
 const Annonces = ({ data }) => {
     const [page, setPage] = useState(1);
@@ -34,9 +36,9 @@ const Annonces = ({ data }) => {
                         </div>
                         <div className='traveling-information'>
                             <span>Salut c'est : {voyageur.nom} </span>
-                            <span>Je suis à : {voyageur.villeDepart.toLocaleLowerCase()} ({(voyageur.paysDepart)}) actuellement</span>
+                            <span>Je suis à : {voyageur.villeDepart.toLocaleLowerCase()} ({(countryList().getLabel(voyageur.paysDepart))}) actuellement</span>
                             <span>Je voyage le : {formatDate(voyageur.dateDepart)}</span>
-                            <span>Je vais à : {voyageur.villeArrive.toLocaleLowerCase()} ({(voyageur.paysArrive)})</span>
+                            <span>Je vais à : {voyageur.villeArrive.toLocaleLowerCase()} ({(countryList().getLabel(voyageur.paysArrive))})</span>
                             <span>kilo dispo : {voyageur.kilosDispo}</span>
                             <span>prix kilo : {voyageur.prixKilo} {voyageur.currency}/{voyageur.discutable ? "non discutable" : "discutable"}</span>
                         </div>

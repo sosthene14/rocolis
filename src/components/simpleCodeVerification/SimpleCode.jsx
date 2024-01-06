@@ -1,6 +1,8 @@
 import { method } from "lodash";
 import React, { useEffect, useState, useRef } from "react";
 import "./SimpleCode.css";
+import bcrypt from "bcryptjs";
+import handleJWT from "../handleJWT/JWT";
 
 const CodeVerificationMessage = ({ email, onSendData }) => {
   const [code, setCode] = useState("");
@@ -8,7 +10,7 @@ const CodeVerificationMessage = ({ email, onSendData }) => {
   const codeInput = useRef(null);
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (codeInput.current.value === code && codeInput.current.value.trim() != "") {
+    if (bcrypt.compareSync(codeInput.current.value,code) && codeInput.current.value.trim() != "") {
       onSendData(true);
       setCanModify(true);
     } else {
@@ -21,11 +23,13 @@ const CodeVerificationMessage = ({ email, onSendData }) => {
         getValidationCode();
     }
   }, [email]);
+  const [userMail, jwtToken] = handleJWT();
   const getValidationCode = () => {
-    fetch("http://192.168.1.10:5000/api/changing-information", {
+    fetch(`http://192.168.1.11:5000/api/changing-information/${userMail}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
       },
       body: JSON.stringify({
         email: email,

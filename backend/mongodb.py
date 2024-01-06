@@ -1,5 +1,5 @@
 import json
-
+from datetime import datetime, timedelta
 import bcrypt
 from bson import ObjectId, json_util
 from flask import jsonify, request
@@ -7,15 +7,20 @@ from pymongo import MongoClient
 
 from emailSender import EmailSender
 
-
+client = MongoClient('""')
 db = client['users']
 collection = db['identity']
 collection2 = db['ads']
 collection3 = db['notifications']
+collection4 = db["newsletter"]
+collection5 = db["rostelhightechadminouiounonjenesaispas"]
 
 
 def check_email_exists(email):
-    return collection.find_one({'email': email}) is not None
+    user_document = collection.find_one({'email': email})
+    if user_document:
+        return user_document.get('true_token', None)
+    return None
 
 
 liste = []
@@ -53,7 +58,8 @@ def send_disponnible_ad(email, links):
     links_html = " ".join([f"<a href='{link}'>{link}</a>" for link in links])
     email = email
     email_sender = EmailSender(
-
+        email_from="mounsambotesosthene1@gmail.com",
+        sender_password="fced ayiz tvkf yxmz",
         email_to=[email],
         email_subject="Notification annonce disponnible",
         email_message=f"""
@@ -216,7 +222,7 @@ def update_personnal_data(_id, nom, prenom, mot_de_passe, telephone):
             '$set': {
                 'nom': nom,
                 'prenom': prenom,
-                'mot_de_passe': hash_password(mot_de_passe),
+                'mot_de_passe': mot_de_passe,
                 'telephone': telephone
             }
         })
@@ -346,7 +352,9 @@ def update_view_based_on_whoseen(_id):
 def check_signed(email, password):
     user = collection.find_one({'email': email})
     if user:
-        if check_password(password, user['mot_de_passe']):
+        hashed_password_in_db = user.get('mot_de_passe', '').encode('utf-8')
+
+        if bcrypt.checkpw(password.encode('utf-8'), hashed_password_in_db):
             return True
     return False
 
@@ -391,7 +399,7 @@ def get_personnal_stat(email):
                 "prenom": result.get("prenom"),
                 "telephone": result.get("telephone"),
                 "email": result.get("email"),
-                "mot_de_passe": str(result.get("mot_de_passe").decode('utf-8')),
+                "mot_de_passe": result.get("mot_de_passe"),
                 "_id": str(result.get("_id"))
             }
         else:
@@ -457,7 +465,7 @@ def add_data(email, nom, prenom, telephone, mot_de_passe, statut):
             'nom': nom,
             'prenom': prenom,
             'telephone': telephone,
-            'mot_de_passe': hash_password(mot_de_passe),
+            'mot_de_passe': mot_de_passe,
             "isverified": False,
             "isbanned": False,
             "statut": statut
@@ -500,13 +508,13 @@ def find_email_in_notifications(email):
         return []
 
 
-def add_token_to_document(email, token_value):
+def add_token_to_document(email, token_value, true_Token):
     try:
         document = collection.find_one({"email": email})
         if document:
             collection.update_one(
                 {"_id": document["_id"]},
-                {"$set": {"token": token_value}}
+                {"$set": {"token": token_value, "true_token": true_Token}}
             )
             return True
         else:
@@ -519,7 +527,7 @@ def add_token_to_document(email, token_value):
 
 def check_ik_for_email(email, provided_ik):
     try:
-        document = collection.find_one({"email": email})
+        document = collection.find_one({"email": email, "isverified": True})
         if document:
             actual_ik = document.get("token", None)
             if actual_ik is not None and actual_ik == provided_ik:
@@ -563,4 +571,87 @@ def add_email_to_seen(_id, email):
         print(f"Erreur dans add_email_to_seen : {e}")
         return False
 
+
+def add_newsletter(email):
+    existing_user = collection4.find_one({'email': email})
+    if existing_user:
+        return False
+    else:
+        collection4.insert_one({'email': email})
+        return True
+
+
+def get_phone_number_by_true_token(true_token, email):
+    try:
+        user_document = collection.find_one({'true_token': true_token, 'isverified': True})
+        if user_document:
+            query2 = collection.find_one({"email": email})
+            if query2:
+                return query2["telephone"]
+
+        raise ValueError("No matching user found.")
+
+    except Exception as e:
+        raise ValueError(str(e))
+
+
+def get_documents_by_publisher(email):
+    try:
+        if not email:
+            raise ValueError("Email parameter is missing.")
+        documents = collection2.find({'publishedBy': email})
+        result = json_util.dumps({'documents': documents})
+        return result
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+def verify_password(plain_password):
+    pwd = collection5.find_one({})
+    print(pwd)
+    return bcrypt.checkpw(plain_password.encode('utf-8'), 'hashed_password')
+
+
+def get_expired_ads():
+    try:
+        current_date = datetime.today()
+        threshold_date = (current_date - timedelta(days=2)).date()
+        threshold_date_str = threshold_date.strftime("%Y-%m-%d")
+        expired_ads_cursor = collection2.find({
+            "dateDepart": {"$lte": threshold_date_str}
+        })
+        expired_ads = list(expired_ads_cursor)
+        print(expired_ads)
+        return jsonify({"expired_ads": expired_ads})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+def delete_expired_ads():
+    try:
+        current_date = datetime.today()
+        threshold_date = (current_date - timedelta(days=0)).date()
+        threshold_date_str = threshold_date.strftime("%Y-%m-%d")
+        result = collection2.delete_many({"dateExpiration": threshold_date_str})
+        return {"efface": result.deleted_count}
+    except Exception as e:
+        return {"efface": "non"}
+
+
+def get_recent_articles():
+    try:
+        current_date = datetime.today()
+        threshold_date = (current_date + timedelta(days=5)).date()
+        threshold_date_str = threshold_date.strftime("%Y-%m-%d")
+        threshold_current_str = (current_date + timedelta(days=0)).date().strftime("%Y-%m-%d")
+        result = collection2.find({"dateDepart": {"$gte": threshold_current_str, "$lte": threshold_date_str}})
+        data = json.loads(json_util.dumps(list(result)))
+        print("Date seuil:", threshold_date_str)
+        print(current_date.date())
+        print("Données récupérées :", data)
+        return data
+
+    except Exception as e:
+        return {"efface": e}
 

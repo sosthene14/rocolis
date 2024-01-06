@@ -7,6 +7,7 @@ import ValidationCodePage from "../validation_code_sent/ValidationCodePage";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { isValidPhoneNumber } from "react-phone-number-input";
+import bcrypt from "bcryptjs";
 
 function Signup() {
   const [value, setValue] = useState();
@@ -33,6 +34,7 @@ function Signup() {
       setPasErrorVisible(false);
     }
   };
+
   const getFormData = (e) => {
     e.preventDefault();
     const data = {
@@ -40,7 +42,7 @@ function Signup() {
       prenom: prenom.current.value,
       email: email.current.value,
       telephone: value,
-      paswd: paswd.current.value,
+      paswd: bcrypt.hashSync(paswd.current.value, 10),
       statut: statut.current.value,
     };
     setEmail(email.current.value);
@@ -76,7 +78,7 @@ function Signup() {
     setSeeSpiner(true);
     handleSpinnerDelay();
     try {
-      const response = await fetch("http://192.168.1.10:5000/api/post-data", {
+      const response = await fetch("http://192.168.1.11:5000/api/post-data", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -6,93 +6,56 @@ import SearchForm from "../../components/searchForm/SearchForm";
 import Cookies from "universal-cookie";
 import { useJwt, decodeToken, isExpired } from "react-jwt";
 import Select from "react-select";
-import {
-  CitySelect,
-  CountrySelect,
-  StateSelect,
-} from "react-country-state-city";
-import remplacerEspacesParTirets from "../../components/removeSpace/removeSpace";
+import handleJWT from "../../components/handleJWT/JWT";
+import CityDepart from "./CityDepart";
+import CityArrive from "./CityArrive";
 
 function PublishAdd({ datas, email }) {
   const [data, setData] = useState([]);
   const cookies = new Cookies(null, { path: "/" });
   const discutable = useRef();
   const [error, setError] = useState(false);
+  const [erroText, setErroText] = useState("");
   const [succes, setSucces] = useState(false);
   const [id, setId] = useState("");
   const [selectedOption, setSelectedOption] = useState(null);
-  const [paysDepartId, setPaysDepartId] = useState();
-  const [paysArriveId, setPaysArriveId] = useState();
-  const [etatDepartId, setEtatDepartId] = useState();
-  const [etatArriveId, setEtatArriveId] = useState();
-  const [villeDepartId, setVilleDepartId] = useState();
-  const [villeArriveId, setVilleArriveId] = useState();
-  const [paysDepartNom, setPaysDepartNom] = useState();
-  const [paysArriveNom, setPaysArriveNom] = useState();
-  const [etatDepartNom, setEtatDepartNom] = useState();
-  const [etatArriveNom, setEtatArriveNom] = useState();
-  const [villeDepartNom, setVilleDepartNom] = useState();
-  const [villeArriveNom, setVilleArriveNom] = useState();
-  const [saveCountryDepart, setSaveCountryDepart] = useState([]);
-  const [saveStateDepart, setSaveStateDepart] = useState([]);
-  const [saveCityDepart, setSaveCityDepart] = useState([]);
-  const [saveCountryArrive, setSaveCountryArrive] = useState([]);
-  const [saveStateArrive, setSaveStateArrive] = useState([]);
-  const [saveCityArrive, setSaveCityArrive] = useState([]);
-
-  useEffect(() => {
-    console.log(saveCountryDepart);
-  }, [saveCountryDepart]);
+  const [userEmail, jwtToken] = handleJWT();
+  const [valideDepartCity, setValideDepartCity] = useState(false);
+  const [valideArriveCity, setValideArriveCity] = useState(false);
+  const [valideDate, setValideDate] = useState(false);
+  const [cityDepart, setCityDepart] = useState("");
+  const [cityArrive, setCityArrive] = useState("");
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
   useEffect(() => {
     const selectedOption = { value: "XAF", label: "XAF (CFA)" };
     const selectedOptionString = JSON.stringify(selectedOption);
     localStorage.setItem("selectedOption", selectedOptionString);
   }, [selectedOption]);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+  // Formatage de la date et de l'heure
+  const formattedDateTime = currentDateTime.toLocaleString();
 
   const handleDatas = (name, value) => {
     setData({
       ...data,
       [name]: value,
       view: 0,
-      paysDepartId: paysDepartId,
-      paysArriveId: paysArriveId,
-      etatDepartId: etatDepartId ? etatDepartId : 0,
-      etatArriveId: etatArriveId ? etatArriveId : 0,
-      villeDepartId: villeDepartId ? villeDepartId : 0,
-      villeArriveId: villeArriveId ? villeArriveId : 0,
-      etatDepart: remplacerEspacesParTirets(etatDepartNom)
-        ? remplacerEspacesParTirets(etatDepartNom)
-        : remplacerEspacesParTirets(paysDepartNom)
-        ? remplacerEspacesParTirets(paysDepartNom)
-        : "fr",
-      villeDepart: remplacerEspacesParTirets(villeDepartNom)
-        ? remplacerEspacesParTirets(villeDepartNom)
-        : remplacerEspacesParTirets(etatDepartNom)
-        ? remplacerEspacesParTirets(etatDepartNom)
-        : remplacerEspacesParTirets(paysDepartNom)
-        ? remplacerEspacesParTirets(paysDepartNom)
-        : "fr",
-      villeArrive: remplacerEspacesParTirets(villeArriveNom)
-        ? remplacerEspacesParTirets(villeArriveNom)
-        : remplacerEspacesParTirets(etatArriveNom)
-        ? remplacerEspacesParTirets(etatArriveNom)
-        : remplacerEspacesParTirets(paysArriveNom)
-        ? remplacerEspacesParTirets(paysArriveNom)
-        : "fr",
-      etatArrive: remplacerEspacesParTirets(etatArriveNom)
-        ? remplacerEspacesParTirets(etatArriveNom)
-        : remplacerEspacesParTirets(paysArriveNom)
-        ? remplacerEspacesParTirets(paysArriveNom)
-        : "fr",
-      saveCountryDepart: saveCountryDepart,
-      saveStateDepart: saveStateDepart,
-      saveCityDepart: saveCityDepart,
-      saveCountryArrive: saveCountryArrive,
-      saveStateArrive: saveStateArrive,
-      saveCityArrive: saveCityArrive,
+      villeDepart: cityDepart.name,
+      villeArrive: cityArrive.name,
+      villeDepartDoc: cityDepart,
+      villeArriveDoc: cityArrive,
+      date: formattedDateTime,
+      paysDepart: cityDepart.country,
+      paysArrive: cityArrive.country,
       currency: selectedOption?.value,
-      labelCurrency: selectedOption?.label,
+      dateExpiration: data.dateDepart ? addTwoDays(data.dateDepart) : undefined,      labelCurrency: selectedOption?.label,
       isValided: false,
       discutable: discutable.current.value ? discutable.current.value : "non",
     });
@@ -103,8 +66,6 @@ function PublishAdd({ datas, email }) {
       setData({ ...data, publishedBy: decodedToken.email });
     }
   }, []);
-
-  useEffect(() => {}, [data]);
 
   useEffect(() => {
     if (id != "") {
@@ -123,10 +84,11 @@ function PublishAdd({ datas, email }) {
     }
   }, [error]);
   const handleConfirmationReceived = () => {
-    fetch("http://192.168.1.10:5000/api/send-confirmation-ads-received", {
+    fetch("http://192.168.1.11:5000/api/send-confirmation-ads-received", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
       },
       body: JSON.stringify({
         email: email,
@@ -144,6 +106,7 @@ function PublishAdd({ datas, email }) {
         }
       })
       .then((data) => {
+        setSucces(false);
         alert(
           "Votre annonce a bien été envoyée aux administrateurs. Vous recevrez un e-mail pour plus de détails."
         );
@@ -159,31 +122,52 @@ function PublishAdd({ datas, email }) {
 
   const handleAdd = async (e) => {
     e.preventDefault();
-    if (data.villeDepart === "fr" || data.villeArrive === "fr") {
+    const dateDepart = new Date(data.dateDepart);
+    const dateArrive = new Date(data.dateArrive);
+
+    if (dateDepart >= dateArrive) {
       setError(true);
+      setErroText(
+        "La date de départ ne peux pas être superieure ou égale à la date d'arrivée"
+      );
       return;
-    } else {
-      try {
-      const response = await fetch("http://192.168.1.10:5000/api/ads-ad", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          data: data,
-        }),
-      });
+    }
+    if (data.villeDepart == "") {
+      setError(true);
+      setErroText("Veuillez renseigner la ville de depart");
+      return;
+    }
+    if (data.villeArrive == "") {
+      setError(true);
+      setErroText("Veuillez renseigner la ville d'arrivée");
+      return;
+    }
+    try {
+      setSucces(true);
+      const response = await fetch(
+        `http://192.168.1.11:5000/api/ads-ad/${userEmail}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify({
+            data: data,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Erreur lors de la requête");
       }
       const responseData = await response.json();
-      setSucces(true);
+      
       setId(responseData.reponse);
     } catch (error) {
       alert("Une erreur s'est produite");
+      window.location.reload();
       console.error("Une erreur s'est produite :", error.message);
-    }
     }
   };
 
@@ -214,10 +198,39 @@ function PublishAdd({ datas, email }) {
       localStorage.setItem("selectedOption", JSON.stringify(selectedOption));
     }
   }, [selectedOption]);
+
+  const handleCityArrive = (value) => {
+    if (value != undefined) {
+      setData({
+        ...data,
+        villeArrive: value.name,
+        villeArriveDoc: value,
+        paysArrive: value.country,
+      });
+      setCityArrive(value);
+    }
+  };
+
+  const handleCityDepart = (value) => {
+    if (value != undefined) {
+      setData({
+        ...data,
+        villeDepart: value.name,
+        villeDepartDoc: value,
+        paysDepart: value.country,
+      });
+      setCityDepart(value);
+    }
+  };
+  function addTwoDays(originalDate) {
+    var currentDate = new Date(originalDate);
+    currentDate.setDate(currentDate.getDate() + 3);
+    var newDateValue = currentDate.toISOString().split("T")[0];
+    return newDateValue;
+  }
   return (
     <div>
       <NavBar />
-
       <div>
         <h1 className="detailed-ads-text" style={{ marginTop: "40px" }}>
           Ajouter une annonce
@@ -253,66 +266,20 @@ function PublishAdd({ datas, email }) {
                 title="Uniquement des lettres de l'alphabet français, les accents ne sont pas acceptés, 2 caractères minimum "
               />
             </div>
-            <div>
-              <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
-                Pays (départ)
-              </p>
-              <CountrySelect
-                showFlag={true}
-                countryid={paysDepartId}
-                onChange={(e) => {
-                  const functionsToCall = [
-                    () => console.log(e),
-                    () => handleDatas("paysDepart", e.name),
-                    () => setPaysDepartNom(e.name),
-                    () => setPaysDepartId(e.id),
-                    () => setSaveCountryDepart(...saveCountryDepart, e),
-                  ];
 
-                  functionsToCall.forEach((func) => func());
-                }}
-                placeHolder="Pays"
-              />
-            </div>
-
-            <div>
-              <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
-                Etat ou departement (départ)
-              </p>
-              <StateSelect
-                countryid={paysDepartId}
-                onChange={(e) => {
-                  console.log(e);
-                  setEtatDepartNom(e.name);
-                  setEtatDepartId(e.id);
-                  setSaveStateDepart(...saveStateDepart, e);
-                }}
-                placeHolder="Etat ou departement"
-              />
-            </div>
             {error ? (
               <div
                 style={{ backgroundColor: "#f8f9fa" }}
                 className="text-red-500 absolute shadow-md rounded-xl p-10 top-1/2 mt-72 text-center z-50 left-1/2 transform -translate-x-1/2 -translate-y-1/2 "
               >
-                <p>Veuillez remplir au moins les noms des pays</p>
+                <p>{erroText}</p>
               </div>
             ) : null}
             <div>
               <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
                 Ville (départ)
               </p>
-              <CitySelect
-                countryid={paysDepartId}
-                style={{ width: "100%", height: "40px" }}
-                stateid={etatDepartId}
-                onChange={(e) => {
-                  setVilleDepartId(e.id);
-                  setVilleDepartNom(e.name);
-                  setSaveCityDepart(...saveCityDepart, e);
-                }}
-                placeHolder="ville"
-              />
+              <CityDepart citieValue={handleCityDepart} />
             </div>
 
             <div>
@@ -326,7 +293,9 @@ function PublishAdd({ datas, email }) {
                 className="shadow-md w-60 sm:w-72 text-sm rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none "
                 type="date"
                 value={data.dateDepart || ""}
-                onChange={(e) => handleDatas("dateDepart", e.target.value)}
+                onChange={(e) => {
+                  handleDatas("dateDepart", e.target.value);
+                }}
                 required
               />
             </div>
@@ -437,55 +406,9 @@ function PublishAdd({ datas, email }) {
             <div className="flex flex-col items-center gap-5 rounded-lg mb-10 ">
               <div>
                 <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
-                  Pays (Arrivée)
-                </p>
-                <CountrySelect
-                  showFlag={true}
-                  required
-                  countryid={paysArriveId}
-                  onChange={(e) => {
-                    setPaysArriveId(e.id);
-                    handleDatas("paysArrive", e.name);
-                    setPaysArriveNom(e.name);
-                    setSaveCountryArrive(...saveCountryArrive, e);
-                  }}
-                  placeHolder="Pays"
-                />
-              </div>
-
-              <div>
-                <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
-                  Etat ou departement (Arrivée)
-                </p>
-                <StateSelect
-                  required
-                  countryid={paysArriveId}
-                  onChange={(e) => {
-                    setEtatArriveId(e.id);
-                    handleDatas("etatArrive", e.name);
-                    setEtatArriveNom(e.name);
-                    setSaveStateArrive(...saveStateArrive, e);
-                  }}
-                  placeHolder="Etat ou departement"
-                />
-              </div>
-
-              <div>
-                <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">
                   Ville (Arrivée)
                 </p>
-                <CitySelect
-                  countryid={paysArriveId}
-                  style={{ width: "100%", height: "40px" }}
-                  stateid={etatArriveId}
-                  onChange={(e) => {
-                    setVilleArriveId(e.id);
-                    handleDatas("villeArrive", e.name);
-                    setVilleArriveNom(e.name);
-                    setSaveCityArrive(...saveCityArrive, e);
-                  }}
-                  placeHolder="ville"
-                />
+                <CityArrive citieValue={handleCityArrive} />
               </div>
               <div>
                 <p className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">

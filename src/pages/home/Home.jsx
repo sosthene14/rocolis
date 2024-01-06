@@ -6,11 +6,29 @@ import FilterDropdown from "../../components/filterDropdown/FilterDropDown";
 import { Footer } from "../../components/footer/Footer";
 import UserIcon from "../../components/userIcon/UserIcon";
 import { ThreeCircles } from "react-loader-spinner";
+import Header from "./Header";
+import SectionBackground from "./SectionBackground";
+import SectionPlanification from "./SectionPlanification";
+import SectionDepartDest from "./SectionDepartDest";
+import SliderComponant from "./Slider";
+import Slider2 from "./Slider2";
+import handleJWT from "../../components/handleJWT/JWT";
+import images from "../../assets/images/images";
 
-function Home({datas,notificationData}) {
+function Home({ datas, notificationData }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isError, setIsError] = useState(false); // Added loading state
+  const [isError, setIsError] = useState(false);
+  const [dataRecent, setDataRecent] = useState([]);
+  const [userMail, jwtToken] = handleJWT();
+  // Added loading state
+
+  /*
+  useEffect(() => {
+    if (dataRecent.length > 0 && jwtToken !== "") {
+      getSellerPhone(data[0].publishedBy, jwtToken);
+    }
+  }, [dataRecent, jwtToken]);*/
 
   useEffect(() => {
     setLoading(true);
@@ -22,7 +40,6 @@ function Home({datas,notificationData}) {
     setLoading(false);
     setData(datas);
   }, [datas]);
-
   return (
     <>
       {loading ? (
@@ -41,43 +58,43 @@ function Home({datas,notificationData}) {
           />
         </div>
       ) : (
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <div className="bg-div-image">
-            <UserIcon />
-            <div className="nav-items">
-              <h1 className='text-4xl font-medium' style={{ color: "white", cursor: "pointer" }}>ROCOLIS</h1>
-              <nav>
-                <ul className="links-ul">
-                  <li>
-                    <a href="/" className='mylinks'>Accueil</a>
-                  </li>
-                  <li>
-                    <a href="/destinations" className='mylinks'>Destinations</a>
-                  </li>
-                  <li>
-                    <a href="/contacter-nous" className='mylinks'> Nous contacter </a>
-                  </li>
-                </ul>
-              </nav>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            overflowX: "hidden",
+          }}
+        >
+          <Header />
+          <SectionBackground />
+          <div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <div>
+                <SearchForm datas={datas} notificationData={notificationData} />
+              </div>
+              <div>
+                <SectionPlanification />
+              </div>
+              <div>
+                <SectionDepartDest />
+              </div>
+              <div>
+                <div>
+                  <SliderComponant />
+                </div>
+              </div>
             </div>
-            <div>
-              <h1 className="slogan">
-                Trouver des vendeurs de kilos plus facilement
-              </h1>
-            </div>
-            <div>
-              <SearchForm datas={datas} notificationData={notificationData} />
-            </div>
-
-            <div>
-              <FilterDropdown data={data} />
-            </div>
-            {isError && (
-              <p style={{ color: "red", textAlign: "center" }}>Il n'y a pas d'annonces disponibles</p>
-            )}
-            <div>
-              <Footer />
-            </div>
+          </div>
+          <div>
+            <Footer />
           </div>
         </div>
       )}

@@ -5,6 +5,9 @@ import images from '../../assets/images/images'
 import { useRef, useEffect } from 'react'
 import { ThreeCircles } from 'react-loader-spinner'
 import { useJwt, decodeToken, isExpired } from "react-jwt";
+import bcrypt from "bcryptjs";
+import handleJWT from '../../components/handleJWT/JWT';
+
 const ValidationCodePage = (code, email) => {
   const [errorCode, setErrorCode] = useState("")
   const userEntry = useRef()
@@ -25,7 +28,6 @@ const ValidationCodePage = (code, email) => {
       });
       if (decodedToken != null) {
         setExpDay(expirationDate)
-        console.log(decodedToken);
         sessionStorage.setItem("token", token)
       }
 
@@ -33,12 +35,15 @@ const ValidationCodePage = (code, email) => {
 
 
   }, [token]);
+  const [userEmail, jwtToken] = handleJWT();
   const makeVerified = async () => {
-    try {
-      const response = await fetch('http://192.168.1.10:5000/api/make-verified', {
+
+       try {
+      const response = await fetch(`http://192.168.1.11:5000/api/make-verified/${userEmail}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwtToken}`,
         },
         body: JSON.stringify({ "email": sessionStorage.getItem("email") }),
       });
@@ -47,15 +52,21 @@ const ValidationCodePage = (code, email) => {
         throw new Error('La requête POST a échoué.');
       }
       const responseData = await response.json();
+      console.log(responseData)
+      if (responseData["response"]["success"] == true){
+        window.location.href = "/"
+      }
 
     } catch (error) {
       console.error('Erreur lors de la requête POST:', error.message);
     }
+    
+   
   }
 
   const getToken = async () => {
     try {
-      const response = await fetch('http://192.168.1.10:5000/api/send-jwt', {
+      const response = await fetch('http://192.168.1.11:5000/api/send-jwt', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,35 +78,42 @@ const ValidationCodePage = (code, email) => {
         throw new Error('La requête POST a échoué.');
       }
       const responseData = await response.json();
-      setToken(responseData["token"])
-      console.log(responseData)
+      if (responseData["token"] != "lol"){
+        setToken(responseData["token"])
+      }
+      
+      
 
     } catch (error) {
       console.error('Erreur lors de la requête POST:', error.message);
     }
   }
 
+
   function checkCodeValidity() {
-    setSeeSpiner(true)
-    if (userEntry.current.value !== code.code) {
-      setErrorCode("Code incorrect")
-      setSeeSpiner(false)
-    }
-    else {
+    setSeeSpiner(true);
+  
+    if (bcrypt.compareSync(userEntry.current.value, code.code)) {
       cookies.set('jwt', token, {
         expires: expDay,
       });
-      setSeeSpiner(false)
-      getToken()
-      makeVerified()      
+      setSeeSpiner(false);
+      getToken();
+    } else {
+      setErrorCode("Code incorrect");
+      setSeeSpiner(false);
+        // Assurez-vous que cette ligne est correctement positionnée
     }
   }
+  
+
   useEffect(() => {
-    if (cookies.get("jwt") != undefined) {
-      window.location.href = "/"
+    if (cookies.get("jwt") != undefined && userEmail != "" && jwtToken != "") {
+      makeVerified()
+      
     }
     
-  },[cookies])
+  },[cookies,userEmail])
   return (
     <div>
       <div className="_titleblock_signin">

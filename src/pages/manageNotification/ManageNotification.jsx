@@ -68,7 +68,7 @@ function ManageNotification({ email }) {
     setLoader(true);
     if (email) {
     }
-    fetch("http://192.168.1.10:5000/api/get-notifications", {
+    fetch("http://192.168.1.11:5000/api/get-notifications", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -91,7 +91,7 @@ function ManageNotification({ email }) {
   };
 
   const addNotificationsToDb = (email) => {
-    fetch("http://192.168.1.10:5000/api/add-notifications", {
+    fetch("http://192.168.1.11:5000/api/add-notifications", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -146,7 +146,7 @@ function ManageNotification({ email }) {
   const sendDeleteRequest = (id) => {
     setLoader(true);
     if (email !== "") {
-      fetch("http://192.168.1.10:5000/api/delete-notifications", {
+      fetch("http://192.168.1.11:5000/api/delete-notifications", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

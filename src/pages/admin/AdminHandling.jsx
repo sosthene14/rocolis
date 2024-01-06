@@ -11,13 +11,13 @@ function AdminHandling({ verifiedAds,email }) {
   const [unverifiedAds, setUnverifiedAds] = useState([]);
 
   useEffect(() => {
-    getAllDatas("http://192.168.1.10:5000/api/get-all-user");
+    getAllDatas("http://192.168.1.11:5000/api/get-all-user");
   }, [setUsers]);
   useEffect(() => {
     setAds(verifiedAds);
   });
   useEffect(() => {
-    getAllUnverifiedAds("http://192.168.1.10:5000/api/get-invalided-ads");
+    getAllUnverifiedAds("http://192.168.1.11:5000/api/get-invalided-ads");
   },[setUnverifiedAds])
 
   function getAllUnverifiedAds(api) {

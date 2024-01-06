@@ -1,17 +1,20 @@
 import React from "react";
+import { useState } from "react";
 import "./Admin.css";
 import formatDate from "../../components/formatDate/formatDate";
 
 function GetAllVerifiedAd({ ads }) {
-  function updateValided(_id) {
+  const [token,setToken] = useState("");
+  function updateValided(_id,index) {
     const requestOptions = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ document_id: _id }),
     };
-    fetch("http://192.168.1.10:5000/api/update-is-valided", requestOptions)
+    fetch("http://192.168.1.11:5000/api/unverified-ads", requestOptions)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -21,19 +24,41 @@ function GetAllVerifiedAd({ ads }) {
       .then((data) => {
         if (data["response"]) {
           alert("L'annonce a bien été modifié");
-          window.location.reload();
+          sendPublicationNonSuccess(index)
+          
         } else {
           alert("L'annonce n'a pas été modifié");
         }
       })
       .catch((error) => {
+        alert("Token invalide");
         console.error("Error:", error);
       });
   }
+  const sendPublicationNonSuccess = (index) => {
+    fetch("http://192.168.1.11:5000/api/send-invalided-ads-to-user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+          email:ads[index].publishedBy,
+      }),
+    }).then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      alert("L'email a bien été envoyé");
+      return response.json();
+    })
+}
   return (
     <div>
-      Total des annonces validées: {ads.length}
-      {ads.map((annonce) => (
+      Total des annonces validées: {ads.length}<br/>
+      <input className="input" placeholder="Token" type="text" value={token} onChange={(e) => setToken(e.target.value)} />
+
+      {ads.map((annonce,index) => (
         <div key={annonce._id["$oid"]}>
           <div
             style={{
@@ -82,7 +107,7 @@ function GetAllVerifiedAd({ ads }) {
             <button
               className="btn-validate"
               onClick={() => {
-                updateValided(annonce._id["$oid"]);
+                updateValided(annonce._id["$oid"],index);
               }}
             >
               Invalider

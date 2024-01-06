@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./FilterDropDown.css";
-import AnnonceMadeByYou from "../../pages/annonceMadeByYou/AnnonceMadeByYou";
 import MyAdd from "../searchForm/myAdd/MyAdd";
 import NavBar from "../navBar/NavBar";
 import _ from "lodash";
 import { ThreeCircles } from "react-loader-spinner";
 import SearchForm from "../searchForm/SearchForm";
 import { FakeFooter } from "../fakeFooter/FakeFooter";
+import handleJWT from "../handleJWT/JWT";
 
 const FilterDropdownV2 = ({ datas, email }) => {
   const [selectedFilter, setSelectedFilter] = useState("");
@@ -14,6 +14,7 @@ const FilterDropdownV2 = ({ datas, email }) => {
   const [dataUser, setDataUser] = useState([]);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true); // Added loading state
+  const [userMail, jwtToken] = handleJWT();
 
   const handleFilterChange = (e) => {
     const value = e.target.value;
@@ -37,30 +38,35 @@ const FilterDropdownV2 = ({ datas, email }) => {
   }, [email]);
 
   useEffect(() => {
-    if (emailExist) {
-      go();
+    if (emailExist && jwtToken != "" && userMail != "") {
+      getData();
     }
-  }, [email, data]);
+  }, [email, jwtToken, userMail]);
 
-  function go() {
-    let results = _.filter(data, { publishedBy: email });
-    if (results.length === 0) {
-      setDataUser([]);
-    } else {
-      setDataUser(results);
-    }
+  const getData = () => {
+    setLoading(true);
+    fetch(`http://192.168.1.11:5000/api/get-documents-by-publisher/${userMail}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${jwtToken}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        data["documents"].map((data) => {
+          setDataUser((prevData) => [...prevData, data]);
+        
+        })
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        setLoading(false);
+      });
   }
 
-  useEffect(() => {
-    setLoading(true);
-    if (datas.length === 0) {
-      setLoading(true);
-    } else {
-      setLoading(false);
-    }
-    setLoading(false);
-    setData(datas);
-  }, [datas]);
+
 
   const sortData = (filter) => {
     switch (filter) {
@@ -144,25 +150,9 @@ const FilterDropdownV2 = ({ datas, email }) => {
                   prixKilo={data.prixKilo}
                   dateDepart={data.dateDepart}
                   dateArrive={data.dateArrive}
-                  saveCountryDepart={data.saveCountryDepart}
                   nom={data.nom}
-                  saveStateDepart={data.saveStateDepart}
-                  paysDepartId={data.paysDepartId}
-                  paysArriveId={data.paysArriveId}
-                  villeDepartId={data.villeDepartId}
-                  villeArriveId={data.villeArriveId}
-                  etatDepartId={data.etatDepartId}
-                  etatArriveId={data.etatArriveId}
-                  villeDepartNom={data.villeDepart}
-                  villeArriveNom={data.villeArrive}
-                  paysDepartNom={data.paysDepart}
-                  paysArriveNom={data.paysArrive}
-                  etatDepartNom={data.etatDepart}
-                  etatArriveNom={data.etatArrive}
-                  saveCityDepart={data.saveCityDepart}
-                  saveCountryArrive={data.saveCountryArrive}
-                  saveStateArrive={data.saveStateArrive}
-                  saveCityArrive={data.saveCityArrive}
+                  villeDepartDoc={data.villeDepartDoc}
+                  villeArriveDoc={data.villeArriveDoc}
                   discutable={data.discutable}
                   onloadCurrency_={{
                     value: data.currency,
@@ -171,7 +161,7 @@ const FilterDropdownV2 = ({ datas, email }) => {
                   _id={data._id}
                 />
               </div>
-            ))}
+                ))}
           </div>
           <div style={{}}>
             <FakeFooter />

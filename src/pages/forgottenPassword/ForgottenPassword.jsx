@@ -7,7 +7,7 @@ const ForgottenPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://192.168.1.10:5000/api/email-exist", {
+      const response = await fetch("http://192.168.1.11:5000/api/email-exist", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
